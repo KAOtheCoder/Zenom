@@ -14,7 +14,7 @@ daq::daq(QWidget *parent) :
         ui->cbPorts->addItem(info.portName());
     }
 
-    connect(&mSerial, SIGNAL(readyRead()), this, SLOT(on_serial_read()));
+    connect(&mSerial, SIGNAL(readyRead()), SLOT(on_serial_read()));
     mDeviceStatus = DAQ_NOT_CONNECTED;
 }
 
@@ -57,12 +57,12 @@ void daq::tick(){
                     if(QString::fromStdString(cntrVariables.at(j)->name()) == varName){
                         if(channel.startsWith("ADC")){
                             uint8_t chn = channel.at(3).toAscii() - '0' - 1;
-                            cntrVariables[j]->setHeapElement(0, adc[chn]);
+                            cntrVariables[j]->setHeapElement(0,0, adc[chn]);
                             break;
                         }
                         if(channel.startsWith("ENC")){
-                            uint8_t chn = channel.at(3).toAscii() - '0';
-                            cntrVariables[j]->setHeapElement(0, enc[chn]);
+                            uint8_t chn = channel.at(3).toAscii() - '0' - 1;
+                            cntrVariables[j]->setHeapElement(0,0, enc[chn]);
                             break;
                         }
                     }
@@ -95,6 +95,7 @@ void daq::sendStateRequest(StateRequest pRequest)
         state = STOPPED;
         ui->label->setText("STOPPED: " + QString(tickCnt));
         daq_start(0);
+        daq_reset();
     } else if(pRequest == R_TERMINATE){
         state = TERMINATED;
         ui->label->setText("TERMINATED: " + QString(tickCnt));
@@ -164,20 +165,23 @@ void daq::on_btnConnect_clicked()
 
 void daq::daq_reset(){
     uint8_t cmd[] = {SOFT_RST, SOFT_RST, SOFT_RST};
-    mSerial.write((const char*)cmd, sizeof (cmd));
+    int ret = mSerial.write((const char*)cmd, sizeof (cmd));
+    mSerial.flush();
     mDeviceStatus = DAQ_READY;
+    mSerial.clear();
+    std::cout << "Reset: " << (int)sizeof(cmd) << ", " << ret << std::endl;
 }
 
 void daq::daq_upd_dac(uint8_t channel, double data){
     //TODO: dac mode gore heseplamayi yap. su an 0 5 kabul ettik.
     if(data < 0) data = 0;
     if(data > 5) data = 5;
-    int dac = data/5.0*16284.0;
+    int dac = data/5.0*16383.0;
     uint8_t d1 = dac;
     uint8_t d2 = (dac >> 8);
     uint8_t cmd[] = {UPD_DAC, channel, d1, d2 };
     int ret = mSerial.write((const char*)cmd, sizeof (cmd));
-    std::cout << "Dac: " << (int)channel << ", " << data << ", " << ret << std::endl;
+    std::cout << "Dac: " << (int)channel << ", " << data << ", " << ret << " serial: " << mSerial.bytesAvailable() << std::endl;
 }
 
 void daq::setFrequency(double freq){
@@ -211,20 +215,25 @@ void daq::daq_init(){
                      SOFT_RST,
                      SOFT_RST,
                      SET_SAMP_RATE, s1, s2, s3,
+                     INIT_ENC, CH_ENABLE, 0, //0 position, 1 velocitiy mode
                      RST_ENC_CNT, CH_ALL | CH_ENABLE, //reset all encoder counters
-                     SET_ENC_MAX_CNT, CH_ALL, e1, e2, e3,
                      SET_ENC_VEL_PER, CH_ALL, 0, 0,
+                     SET_ENC_MAX_CNT, CH_ALL, e1, e2, e3,
                      INIT_PWM, CH_ALL, p1, p2, c1, c2,
                      INIT_ADC, CH_ALL | CH_ENABLE, //Enable all ADC's
                      INIT_DAC, CH_ALL | DAC_0_5, s1, s2, //Enable all DAC's with 0-5v range
                      SET_TRANS_MODE, 1 //send data immediately
                      };
     int ret = mSerial.write((const char*)cmd, sizeof (cmd));
+    std::cout << "Init: " << sizeof(cmd) << ", " << ret << std::endl;
+    mSerial.flush();
 }
 
 void daq::daq_start(uint8_t status){
     uint8_t cmd[] = {START_STOP_AQ, status};
-    mSerial.write((const char*)cmd, sizeof (cmd));
+    int ret = mSerial.write((const char*)cmd, sizeof (cmd));
+    std::cout << "Start stop: " << (int)status << ", " << ret << std::endl;
+    mSerial.flush();
 }
 
 void daq::on_serial_read(){
@@ -237,13 +246,17 @@ void daq::on_serial_read(){
 
         switch (signature) {
         case SIG_ANALOG_IN:
-            if(channel < 8)
-                adc[channel] = (mSerialBuf.at(1) + (mSerialBuf.at(2)>>8))/(16384.0)*(5.0);
+            if(channel < 8){
+                adc[channel] = (mSerialBuf.at(1) + (mSerialBuf.at(2)<<8))/(16383.0)*(5.0);
+                std::cout << "Adc" << (int) channel << ": " << adc[channel] << "," << (int)mSerialBuf.at(1) << "," << (int)mSerialBuf.at(2) << std::endl;
+            }
             //todo: update control variables
             break;
         case SIG_ENCODER_IN:
-            if(channel < 8)
-                enc[channel] = mSerialBuf.at(1) + (mSerialBuf.at(2) >> 8) + (mSerialBuf.at(2) >> 16);
+            if(channel < 8){
+                enc[channel] = mSerialBuf.at(1) + (mSerialBuf.at(2) << 8) + (mSerialBuf.at(3) << 16);
+                std::cout << "Enc" << (int) channel << ": " << enc[channel] << std::endl;
+            }
             //todo: update control variables
             break;
         case SIG_DIGITAL_IN:
@@ -251,6 +264,7 @@ void daq::on_serial_read(){
             in[1] = (mSerialBuf.at(1) & 0x02) >> 1;
             in[2] = (mSerialBuf.at(1) & 0x04) >> 2;
             in[3] = (mSerialBuf.at(1) & 0x08) >> 3;
+            std::cout << "Succesfully parsed digin" << std::endl;
             //todo: update control variables
             break;
         case SIG_DEV_STATUS:
@@ -258,16 +272,21 @@ void daq::on_serial_read(){
             ui->lblCommErr->setText(QString::number(mSerialBuf.at(1)));
             ui->lblUSBErr->setText(QString::number(mSerialBuf.at(2)));
             ui->lblGenericErr->setText(QString::number(mSerialBuf.at(3)));
+            std::cout << "Succesfully parsed eof" << std::endl;
             break;
         case SIG_TIMESTAMP:
+            std::cout << "Succesfully parsed timestamp" << std::endl;
+            break;
         case SIG_SW_INFO:
+            std::cout << "Succesfully parsed sw info" << std::endl;
             break;
         default:
             //an error occured
             //remove a char
             err = true;
-            mSerialBuf.remove(0,1);
+            QChar rm = mSerialBuf.remove(0,1).at(0);
             mDeviceStatus = DAQ_ERR;
+            std::cout << "Can't parse: " << rm.toAscii() << std::endl;
             break;
         }
         if(!err){
