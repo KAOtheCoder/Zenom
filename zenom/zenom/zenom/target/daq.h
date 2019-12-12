@@ -100,11 +100,9 @@ private:
     int tickCnt;
     QSerialPort mSerial;
     QByteArray mSerialBuf;
-    double adc[8];
     int dacTable[8];
     int encTable[8];
     int adcTable[8];
-    int enc[8];
     int out[4];
     int in[4];
     DAQ_Status mDeviceStatus;

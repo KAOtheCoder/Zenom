@@ -286,9 +286,9 @@ void daq::on_serial_read(){
         switch (signature) {
         case SIG_ANALOG_IN:
             if(channel < 8){
-                adc[channel] = (mSerialBuf.at(1) + (mSerialBuf.at(2)<<8))/(16383.0)*(5.0);
                 if(state == RUNNING){
-                    cntrVariables[adcTable[channel]]->setHeapElement(0,0, adc[channel]);
+                    double adc = (mSerialBuf.at(1) + (mSerialBuf.at(2)<<8))/(16383.0)*(5.0);
+                    cntrVariables[adcTable[channel]]->setHeapElement(0,0, adc);
                 }
 
                 adcCnt++;
@@ -297,9 +297,9 @@ void daq::on_serial_read(){
             break;
         case SIG_ENCODER_IN:
             if(channel < 8){
-                enc[channel] = mSerialBuf.at(1) + (mSerialBuf.at(2) << 8) + (mSerialBuf.at(3) << 16);
                 if(state == RUNNING){
-                    cntrVariables[encTable[channel]]->setHeapElement(0,0, enc[channel]);
+                    int enc = mSerialBuf.at(1) + (mSerialBuf.at(2) << 8) + (mSerialBuf.at(3) << 16);
+                    cntrVariables[encTable[channel]]->setHeapElement(0,0, enc);
                 }
                 //std::cout << "Enc" << (int) channel << ": " << enc[channel] << std::endl;
             }
