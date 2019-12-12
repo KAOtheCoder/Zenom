@@ -189,7 +189,6 @@ void Zenom::doloop()
     mPlotManager->tick();
     mSceneManager->tick();
     mCameraManager->tick();
-    mDaq->tick();
 }
 
 State Zenom::simulationState()
@@ -319,7 +318,7 @@ void Zenom::openProject(const QString& pProjectPath)
             loadSettings( projectAbsolutePath );
 
 
-            mTimer.start(50);
+            mTimer.start(100);
 
             setWindowTitle( fileInfo.baseName() );
 

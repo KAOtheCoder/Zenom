@@ -73,7 +73,8 @@ SOURCES += main.cpp\
     camerascene.cpp \
     robotmodedialog.cpp \
     target/daq.cpp \
-    target/comboboxitemdelegate.cpp
+    target/comboboxitemdelegate.cpp \
+    target/targettask.cpp
 
 HEADERS  += zenom.h \
     messagelistenertask.h \
@@ -124,7 +125,8 @@ HEADERS  += zenom.h \
     camerascene.h \
     robotmodedialog.h \
     target/daq.h \
-    target/comboboxitemdelegate.h
+    target/comboboxitemdelegate.h \
+    target/targettask.h
 
 FORMS    += zenom.ui \
     controlvariableswidget.ui \

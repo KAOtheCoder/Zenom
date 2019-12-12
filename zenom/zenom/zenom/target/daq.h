@@ -6,6 +6,9 @@
 #include "comboboxitemdelegate.h"
 #include <QSerialPort>
 #include <QSerialPortInfo>
+#include <QTimer>
+#include <QDebug>
+#include "targettask.h"
 
 namespace Ui {
 class daq;
@@ -80,10 +83,11 @@ public:
     explicit daq(QWidget *parent = nullptr);
     ~daq();
 
-    void tick();
     void sendStateRequest(StateRequest pRequest);
 
     void setFrequency(double freq);
+    int doloop();
+    State state;
 
 private slots:
     void on_btnConnect_clicked();
@@ -93,17 +97,23 @@ private:
     Ui::daq *ui;
     const ControlVariableList& cntrVariables;
     const LogVariableList& logVariables;
-    State state;
     int tickCnt;
     QSerialPort mSerial;
     QByteArray mSerialBuf;
     double adc[8];
-    double dac[8];
+    int dacTable[8];
+    int encTable[8];
+    int adcTable[8];
     int enc[8];
     int out[4];
     int in[4];
     DAQ_Status mDeviceStatus;
     double mFreq;
+    TargetTask *mLoopTask;
+    void loop_start();
+    void loop_end();
+
+    QTimer mTimer;
 
     void init();
 
@@ -112,6 +122,10 @@ private:
     void daq_start(uint8_t status);
 
     void daq_upd_dac(uint8_t channel, double data);
+
+    int adcCnt;
+    int dacCnt;
+    int dacErr;
 };
 
 #endif // DAQ_H

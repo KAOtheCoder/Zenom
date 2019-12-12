@@ -24,52 +24,17 @@ daq::~daq()
 }
 
 
-void daq::tick(){
+int daq::doloop(){
     tickCnt++;
     if(state == RUNNING){
-
-        //ouputs (dac)
-        for(int i=0; i<ui->tblOut->rowCount(); i++){
-            if(ui->tblOut->item(i,1) == nullptr) continue;
-            QString varName = ui->tblOut->item(i,1)->text();
-            QString channel = ui->tblOut->item(i,0)->text();
-            if( varName != ""){
-                for(uint j=0; j<logVariables.size(); j++){
-                    if(QString::fromStdString(logVariables.at(j)->name()) == varName){
-                        if(!logVariables.at(j)->isHeapValid()) break;
-                        double val = logVariables.at(j)->lastHeapElement(0,0);
-                        if(channel.startsWith("DAC")){
-                            uint8_t chn = channel.at(3).toAscii() - '0' - 1;
-                            daq_upd_dac(chn, val);
-                            break;
-                        }
-                    }
-                }
+        for(int i = 0; i<8; i++){
+            if(dacTable[i] >= 0 && dacTable[i] < 8){
+                if(logVariables.at(dacTable[i])->isHeapValid())
+                    daq_upd_dac(i, logVariables.at(dacTable[i])->lastHeapElement(0,0));
             }
-        }//output for
-        //inputs
-        for(int i=0; i<ui->tblIn->rowCount(); i++){
-            if(ui->tblIn->item(i,1) == nullptr) continue;
-            QString varName = ui->tblIn->item(i,1)->text();
-            QString channel = ui->tblIn->item(i,0)->text();
-            if( varName != ""){
-                for(uint j=0; j<cntrVariables.size(); j++){
-                    if(QString::fromStdString(cntrVariables.at(j)->name()) == varName){
-                        if(channel.startsWith("ADC")){
-                            uint8_t chn = channel.at(3).toAscii() - '0' - 1;
-                            cntrVariables[j]->setHeapElement(0,0, adc[chn]);
-                            break;
-                        }
-                        if(channel.startsWith("ENC")){
-                            uint8_t chn = channel.at(3).toAscii() - '0' - 1;
-                            cntrVariables[j]->setHeapElement(0,0, enc[chn]);
-                            break;
-                        }
-                    }
-                }
-            }
-        }//input for
+        }
     } //running
+    return 0;
 }
 
 void daq::sendStateRequest(StateRequest pRequest)
@@ -83,6 +48,7 @@ void daq::sendStateRequest(StateRequest pRequest)
         ui->label->setText("START: " + QString(tickCnt));
         daq_init();
         daq_start(1);
+        loop_start();
     } else if(pRequest == R_PAUSE){
         state = PAUSED;
         ui->label->setText("PAUSED: " + QString(tickCnt));
@@ -96,6 +62,7 @@ void daq::sendStateRequest(StateRequest pRequest)
         ui->label->setText("STOPPED: " + QString(tickCnt));
         daq_start(0);
         daq_reset();
+        loop_end();
     } else if(pRequest == R_TERMINATE){
         state = TERMINATED;
         ui->label->setText("TERMINATED: " + QString(tickCnt));
@@ -106,6 +73,9 @@ void daq::sendStateRequest(StateRequest pRequest)
 
 
 void daq::init(){
+    adcCnt = 0;
+    dacCnt = 0;
+    dacErr = 0;
     ui->tblOut->clear();
     ui->tblIn->clear();
 
@@ -155,7 +125,7 @@ void daq::init(){
 void daq::on_btnConnect_clicked()
 {
     mSerial.setPortName(ui->cbPorts->currentText());
-    mSerial.setBaudRate(115200);
+    mSerial.setBaudRate(1152000*2);
     if(mSerial.open(QIODevice::ReadWrite)){
         ui->lblCommStatus->setText("OK");
         mDeviceStatus = DAQ_CONNECTED;
@@ -169,7 +139,10 @@ void daq::daq_reset(){
     mSerial.flush();
     mDeviceStatus = DAQ_READY;
     mSerial.clear();
-    std::cout << "Reset: " << (int)sizeof(cmd) << ", " << ret << std::endl;
+    qDebug() << "Reset: " << tickCnt << ", " << adcCnt << ", " << dacCnt << ", " << dacErr;
+    adcCnt = 0;
+    dacCnt = 0;
+    dacErr = 0;
 }
 
 void daq::daq_upd_dac(uint8_t channel, double data){
@@ -181,7 +154,9 @@ void daq::daq_upd_dac(uint8_t channel, double data){
     uint8_t d2 = (dac >> 8);
     uint8_t cmd[] = {UPD_DAC, channel, d1, d2 };
     int ret = mSerial.write((const char*)cmd, sizeof (cmd));
-    std::cout << "Dac: " << (int)channel << ", " << data << ", " << ret << " serial: " << mSerial.bytesAvailable() << std::endl;
+    dacCnt++;
+    mSerial.flush();
+    //qDebug() << "Dac: " << (int)channel << ", " << data << ", " << ret << " serial: " << mSerial.bytesAvailable();
 }
 
 void daq::setFrequency(double freq){
@@ -215,30 +190,94 @@ void daq::daq_init(){
                      SOFT_RST,
                      SOFT_RST,
                      SET_SAMP_RATE, s1, s2, s3,
-                     INIT_ENC, CH_ENABLE, 0, //0 position, 1 velocitiy mode
-                     RST_ENC_CNT, CH_ALL | CH_ENABLE, //reset all encoder counters
-                     SET_ENC_VEL_PER, CH_ALL, 0, 0,
-                     SET_ENC_MAX_CNT, CH_ALL, e1, e2, e3,
-                     INIT_PWM, CH_ALL, p1, p2, c1, c2,
-                     INIT_ADC, CH_ALL | CH_ENABLE, //Enable all ADC's
-                     INIT_DAC, CH_ALL | DAC_0_5, s1, s2, //Enable all DAC's with 0-5v range
-                     SET_TRANS_MODE, 1 //send data immediately
+                     INIT_ENC, CH1 | CH_ENABLE, 0, //0 position, 1 velocitiy mode
+                     RST_ENC_CNT, CH1 | CH_ENABLE, //reset all encoder counters
+                     SET_ENC_VEL_PER, CH1, 0, 0,
+                     SET_ENC_MAX_CNT, CH1, e1, e2, e3,
+                     //INIT_PWM, CH_ALL, p1, p2, c1, c2,
+                     //INIT_ADC, CH1 | CH_ENABLE, //Enable all ADC's
+                     INIT_DAC, CH1 | DAC_0_5, s1, s2, //Enable all DAC's with 0-5v range
+                     //SET_TRANS_MODE, 1 //send data immediately
+                     SET_TRANS_MODE, 0 //send data immediately
                      };
     int ret = mSerial.write((const char*)cmd, sizeof (cmd));
-    std::cout << "Init: " << sizeof(cmd) << ", " << ret << std::endl;
+    //qDebug() << "Init: " << sizeof(cmd) << ", " << ret << std::endl;
     mSerial.flush();
+
+    for(int i=0; i<8; i++){
+        dacTable[i] = -1;
+        encTable[i] = -1;
+        adcTable[i] = -1;
+    }
+    //ouputs (dac)
+    for(int i=0; i<ui->tblOut->rowCount(); i++){
+        if(ui->tblOut->item(i,1) == nullptr) continue;
+        QString varName = ui->tblOut->item(i,1)->text();
+        QString channel = ui->tblOut->item(i,0)->text();
+        if( varName != ""){
+            for(uint j=0; j<logVariables.size(); j++){
+                if(QString::fromStdString(logVariables.at(j)->name()) == varName){
+                    if(channel.startsWith("DAC")){
+                        uint8_t chn = channel.at(3).toAscii() - '0' - 1;
+                        dacTable[chn] = j;
+                        break;
+                    }
+                }
+            }
+        }
+    }//output for
+
+    //inputs
+    for(int i=0; i<ui->tblIn->rowCount(); i++){
+        if(ui->tblIn->item(i,1) == nullptr) continue;
+        QString varName = ui->tblIn->item(i,1)->text();
+        QString channel = ui->tblIn->item(i,0)->text();
+        if( varName != ""){
+            for(uint j=0; j<cntrVariables.size(); j++){
+                if(QString::fromStdString(cntrVariables.at(j)->name()) == varName){
+                    if(channel.startsWith("ADC")){
+                        uint8_t chn = channel.at(3).toAscii() - '0' - 1;
+                        //cntrVariables[j]->setHeapElement(0,0, adc[chn]);
+                        adcTable[chn] = j;
+                        break;
+                    }
+                    if(channel.startsWith("ENC")){
+                        uint8_t chn = channel.at(3).toAscii() - '0' - 1;
+                        encTable[chn] = j;
+                        break;
+                    }
+                }
+            }
+        }
+    }//input for
 }
 
+void daq::loop_start(){
+    mLoopTask = new TargetTask( this,
+                    std::chrono::duration<double>(
+                        1.0 / mFreq
+                    ),
+                    "targetLoopTask"
+                );
+    mLoopTask->runTask();
+}
+
+void daq::loop_end(){
+        mLoopTask->requestPeriodicTaskTermination();
+        mLoopTask->join();
+        delete mLoopTask;
+}
 void daq::daq_start(uint8_t status){
     uint8_t cmd[] = {START_STOP_AQ, status};
     int ret = mSerial.write((const char*)cmd, sizeof (cmd));
-    std::cout << "Start stop: " << (int)status << ", " << ret << std::endl;
+    //std::cout << "Start stop: " << (int)status << ", " << ret << std::endl;
     mSerial.flush();
 }
 
 void daq::on_serial_read(){
 
     mSerialBuf.append(mSerial.readAll());
+    qDebug() << mSerialBuf.size();
     while(mSerialBuf.size() > 4){
         uint8_t signature = mSerialBuf.at(0) & 0xF0;
         uint8_t channel = mSerialBuf.at(0) & 0x0F;
@@ -248,23 +287,29 @@ void daq::on_serial_read(){
         case SIG_ANALOG_IN:
             if(channel < 8){
                 adc[channel] = (mSerialBuf.at(1) + (mSerialBuf.at(2)<<8))/(16383.0)*(5.0);
-                std::cout << "Adc" << (int) channel << ": " << adc[channel] << "," << (int)mSerialBuf.at(1) << "," << (int)mSerialBuf.at(2) << std::endl;
+                if(state == RUNNING){
+                    cntrVariables[adcTable[channel]]->setHeapElement(0,0, adc[channel]);
+                }
+
+                adcCnt++;
+                //std::cout << "Adc" << (int) channel << ": " << adc[channel] << "," << (int)mSerialBuf.at(1) << "," << (int)mSerialBuf.at(2) << std::endl;
             }
-            //todo: update control variables
             break;
         case SIG_ENCODER_IN:
             if(channel < 8){
                 enc[channel] = mSerialBuf.at(1) + (mSerialBuf.at(2) << 8) + (mSerialBuf.at(3) << 16);
-                std::cout << "Enc" << (int) channel << ": " << enc[channel] << std::endl;
+                if(state == RUNNING){
+                    cntrVariables[encTable[channel]]->setHeapElement(0,0, enc[channel]);
+                }
+                //std::cout << "Enc" << (int) channel << ": " << enc[channel] << std::endl;
             }
-            //todo: update control variables
             break;
         case SIG_DIGITAL_IN:
             in[0] = mSerialBuf.at(1) & 0x01;
             in[1] = (mSerialBuf.at(1) & 0x02) >> 1;
             in[2] = (mSerialBuf.at(1) & 0x04) >> 2;
             in[3] = (mSerialBuf.at(1) & 0x08) >> 3;
-            std::cout << "Succesfully parsed digin" << std::endl;
+            //std::cout << "Succesfully parsed digin" << std::endl;
             //todo: update control variables
             break;
         case SIG_DEV_STATUS:
@@ -272,13 +317,13 @@ void daq::on_serial_read(){
             ui->lblCommErr->setText(QString::number(mSerialBuf.at(1)));
             ui->lblUSBErr->setText(QString::number(mSerialBuf.at(2)));
             ui->lblGenericErr->setText(QString::number(mSerialBuf.at(3)));
-            std::cout << "Succesfully parsed eof" << std::endl;
+            //std::cout << "Succesfully parsed eof" << std::endl;
             break;
         case SIG_TIMESTAMP:
-            std::cout << "Succesfully parsed timestamp" << std::endl;
+            //std::cout << "Succesfully parsed timestamp" << std::endl;
             break;
         case SIG_SW_INFO:
-            std::cout << "Succesfully parsed sw info" << std::endl;
+            //std::cout << "Succesfully parsed sw info" << std::endl;
             break;
         default:
             //an error occured
@@ -286,7 +331,7 @@ void daq::on_serial_read(){
             err = true;
             QChar rm = mSerialBuf.remove(0,1).at(0);
             mDeviceStatus = DAQ_ERR;
-            std::cout << "Can't parse: " << rm.toAscii() << std::endl;
+            //std::cout << "Can't parse: " << rm.toAscii() << std::endl;
             break;
         }
         if(!err){
