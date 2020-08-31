@@ -1,3 +1,6 @@
 [submodule "qtserialport"]
 	path = qtserialport
 	url = git://code.qt.io/qt/qtserialport.git
+[submodule "OpenSceneGraph"]
+	path = OpenSceneGraph
+	url = https://github.com/openscenegraph/OpenSceneGraph.git
