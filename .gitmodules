@@ -4,3 +4,6 @@
 [submodule "OpenSceneGraph"]
 	path = OpenSceneGraph
 	url = https://github.com/openscenegraph/OpenSceneGraph.git
+[submodule "qwt"]
+	path = qwt
+	url = https://github.com/qwtplot/qwt.git
