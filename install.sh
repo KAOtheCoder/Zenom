@@ -11,7 +11,7 @@ sudo rm -fr build
 sudo mkdir build 
 cd build
 cmake -DDESIRED_QT_VERSION=4 ../
-make osgQt osgSim -j4
+make osgQt osgSim osgdb_osg osgdb_deprecated_osg -j4
 cd ../../
 
 #install osg
