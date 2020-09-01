@@ -6,7 +6,6 @@
 
 #build osg
 cd OpenSceneGraph
-git apply ../patches/osg-gcc-flag-fix.patch
 sudo rm -fr build
 sudo mkdir build 
 cd build
