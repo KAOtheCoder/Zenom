@@ -26,14 +26,14 @@ ZENOM_INSTALL_BINS      = $${ZENOM_INSTALL_PREFIX}/bin
 #--------------------------------------------------------------
 # Qwt path
 #--------------------------------------------------------------
-QWT_HEADERS   = /usr/local/qwt-6.0.1/include
-QWT_LIBS      = /usr/local/qwt-6.0.1/lib
+QWT_HEADERS   = /usr/local/qwt-6.0.1-svn/include
+QWT_LIBS      = /usr/local/qwt-6.0.1-svn/lib
 
 #--------------------------------------------------------------
 # OpenSceneGraph path
 #--------------------------------------------------------------
-OSG_HEADERS   = /usr/local/include
-OSG_LIBS      = /usr/local/lib64
+OSG_HEADERS   = /usr/local/osg/include
+OSG_LIBS      = /usr/local/osg/lib
 
 #--------------------------------------------------------------
 # QtCreator Wizards Plugin Path
