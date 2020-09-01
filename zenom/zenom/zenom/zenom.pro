@@ -24,6 +24,8 @@ CONFIG += c++11
 CONFIG += serialport
 
 SOURCES += main.cpp\
+    target/board.cpp \
+    target/daqboard1.cpp \
         zenom.cpp \
     messagelistenertask.cpp \
     controlvariableswidget.cpp \
@@ -80,6 +82,8 @@ HEADERS  += zenom.h \
     messagelistenertask.h \
     controlvariableswidget.h \
     logvariableswidget.h \
+    target/board.h \
+    target/daqboard1.h \
     widget/colorbutton.h \
     widget/statusbar.h \
     widget/checkedheader.h \
