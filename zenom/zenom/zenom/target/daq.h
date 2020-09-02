@@ -76,7 +76,6 @@ private:
     QList<lookup_entry_t> output_lookup;
 
     void setControlsStatus(bool stat);
-    void disableControls();
 };
 
 #endif // DAQ_H

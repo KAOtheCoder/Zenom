@@ -7,6 +7,7 @@
 using namespace std;
 class DaqBoard1 : public board
 {
+    Q_OBJECT
 public:
     DaqBoard1(QObject *parent = nullptr);
     virtual void init();

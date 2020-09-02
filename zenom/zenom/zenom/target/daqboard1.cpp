@@ -48,6 +48,7 @@ void DaqBoard1::reset()
     enc.enc2 = 0;
     dac.dac1 = 2048;
     dac.dac2 = 2048;
+    mSerialBuf.clear();
 }
 int DaqBoard1::enableInput(QString name)
 {
