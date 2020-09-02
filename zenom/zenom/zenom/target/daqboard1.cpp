@@ -1,8 +1,11 @@
 #include "daqboard1.h"
 
-DaqBoard1::DaqBoard1()
+DaqBoard1::DaqBoard1(QObject *parent) :
+    board(parent)
 {
+    name = "DaqBoard1";
     mSerial.setBaudRate(1000000);
+    reset();
 
     inputs.insert(inputs.end(), "ENC1");
     inputs.insert(inputs.end(), "ENC2");
@@ -12,6 +15,10 @@ DaqBoard1::DaqBoard1()
 
     connect(&mSerial, SIGNAL(readyRead()), SLOT(on_serial_read()));
 }
+void DaqBoard1::init()
+{
+    //do nothing
+}
 void DaqBoard1::start()
 {
     if(!mSerial.open(QIODevice::ReadWrite)){
@@ -20,11 +27,16 @@ void DaqBoard1::start()
 }
 void DaqBoard1::stop()
 {
+    dac.dac1 = 2048;
+    dac.dac2 = 2048;
+    syncOutputs();
     mSerial.close();
 }
 void DaqBoard1::pause()
 {
-    //do nothing
+    dac.dac1 = 2048;
+    dac.dac2 = 2048;
+    syncOutputs();
 }
 void DaqBoard1::resume()
 {
@@ -32,31 +44,38 @@ void DaqBoard1::resume()
 }
 void DaqBoard1::reset()
 {
-    //do nothing
+    enc.enc1 = 0;
+    enc.enc2 = 0;
+    dac.dac1 = 2048;
+    dac.dac2 = 2048;
 }
-bool DaqBoard1::enableInput(string name)
+int DaqBoard1::enableInput(QString name)
 {
-    return true;
+    if(name == "ENC1") return 1;
+    if(name == "ENC2") return 2;
+    return -1;
 }
-bool DaqBoard1::enableOutput(string name)
+int DaqBoard1::enableOutput(QString name)
 {
-    return true;
+    if(name == "DAC1") return 3;
+    if(name == "DAC2") return 4;
+    return -1;
 }
-double DaqBoard1::getInput(string name)
+double DaqBoard1::getInput(int id)
 {
-    if(name == "ENC1"){
+    if(id == 1){
         return (double)(enc.enc1)*2.0*pi/4096;
     }
-    else if (name == "ENC2") {
+    else if (id == 2) {
         return (double)(enc.enc2)*1.0*pi/4096;
     }
 }
-void DaqBoard1::setOutput(string name, double value)
+void DaqBoard1::setOutput(int id, double value)
 {
-    if(name == "DAC1"){
+    if(id == 3){
         dac.dac1 = (uint16_t)(value*2048.0/10.0+2048.0);
     }
-    else if (name == "DAC2") {
+    else if (id == 4) {
         dac.dac2 = (uint16_t)(value*2048.0/10.0+2048.0);
     }
 }

@@ -3,22 +3,23 @@
 board::board(QObject *parent) :
     QObject (parent)
 {
+    name = "not specified";
 }
 
 board::~board() = default;
 
-void board::setComPort(string name){
-    mSerial.setPortName(QString::fromStdString(name));
+void board::setComPort(QString name){
+    mSerial.setPortName(name);
 }
 
 void board::setFrequency(int freq){
     mFreq = 1.0 / freq;
 }
 
-list<string> board::getInputList(){
+QStringList board::getInputList(){
     return inputs;
 }
 
-list<string> board::getOutputList(){
+QStringList board::getOutputList(){
     return outputs;
 }

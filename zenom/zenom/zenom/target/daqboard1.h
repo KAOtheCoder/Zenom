@@ -8,16 +8,20 @@ using namespace std;
 class DaqBoard1 : public board
 {
 public:
-    DaqBoard1();
+    DaqBoard1(QObject *parent = nullptr);
+    virtual void init();
     virtual void start();
     virtual void stop();
     virtual void pause();
     virtual void resume();
     virtual void reset();
-    virtual bool enableInput(string name);
-    virtual bool enableOutput(string name);
-    virtual double getInput(string name);
-    virtual void setOutput(string name, double value);
+    //when you enable and I/O you will get and ID number
+    //ID = -1 is invalid
+    virtual int enableInput(QString name);
+    virtual int enableOutput(QString name);
+    //if you want to acces an I/O you should supply this ID
+    virtual double getInput(int id);
+    virtual void setOutput(int id, double value);
     virtual void syncOutputs();
     virtual void openSettingsDialog();
 

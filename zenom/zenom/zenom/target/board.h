@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringList>
 #include <QSerialPort>
 #include <list>
 
@@ -14,21 +15,26 @@ class board : public QObject
 public:
     board(QObject *parent = Q_NULLPTR);
     virtual ~board();
-    virtual void setComPort(string name);
+    virtual void setComPort(QString name);
     virtual void setFrequency(int freq);
-    virtual list<string> getInputList();
-    virtual list<string> getOutputList();
+    virtual QStringList getInputList();
+    virtual QStringList getOutputList();
+    virtual void init() = 0;
     virtual void start() = 0;
     virtual void stop() = 0;
     virtual void pause() = 0;
     virtual void resume() = 0;
     virtual void reset() = 0;
-    virtual bool enableInput(string name) = 0;
-    virtual bool enableOutput(string name) = 0;
-    virtual double getInput(string name) = 0;
-    virtual void setOutput(string name, double value) = 0;
+    //when you enable and I/O you will get and ID number
+    //ID = -1 is invalid
+    virtual int enableInput(QString name) = 0;
+    virtual int enableOutput(QString name) = 0;
+    //if you want to acces an I/O you should supply this ID
+    virtual double getInput(int id) = 0;
+    virtual void setOutput(int id, double value) = 0;
     virtual void syncOutputs() = 0;
     virtual void openSettingsDialog() = 0;
+    QString name;
 
 
 protected:
@@ -36,8 +42,8 @@ protected:
     QByteArray mSerialBuf;
     double mFreq;
 
-    list<string> inputs;
-    list<string> outputs;
+    QStringList inputs;
+    QStringList outputs;
 };
 
 #endif // BOARD_H
