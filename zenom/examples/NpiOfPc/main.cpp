@@ -86,16 +86,16 @@ int TargetTest::initialize()
 	freq[1] = 3;
 
 	Ke[0] = 200;
-	Ke[1] = 120;
+	Ke[1] = 50;
 
 	k1[0] = 1;
 	k1[1] = 20;
 
-	ki[0] = 40;
-	ki[1] = 10;
+	ki[0] = 20;
+	ki[1] = 5;
 
-	beta[0] = 10;
-	beta[1] = 200;
+	beta[0] = 50;
+	beta[1] = 150;
 
 	deltaE[0] = 10 * Deg2Rad;
 	deltaE[1] = 10 * Deg2Rad;
@@ -142,6 +142,9 @@ int TargetTest::start()
 
 	ef[0] = 0;
 	ef[1] = 0;
+
+	q[0] = 0;
+	q[1] = 0;
 
 	return 0;
 }
