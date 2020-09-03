@@ -15,22 +15,44 @@ DaqBoard1::DaqBoard1(QObject *parent) :
 
     connect(&mSerial, SIGNAL(readyRead()), SLOT(on_serial_read()));
 }
-void DaqBoard1::init()
-{
-    //do nothing
-}
-void DaqBoard1::start()
-{
+void DaqBoard1::setComPort(QString name){
+    if(mSerial.isOpen()){
+        if(mSerial.portName() == name) return;
+        mSerial.close();
+    }
+    mSerial.setPortName(name);
     if(!mSerial.open(QIODevice::ReadWrite)){
         cout << "[TARGET] Couldn't open serial port!";
     }
+    clear();
+}
+
+void DaqBoard1::clear(){
+    enc.enc1 = 0;
+    enc.enc2 = 0;
+    dac.dac1 = 2048;
+    dac.dac2 = 2048;
+    mSerialBuf.clear();
+    if(mSerial.isOpen()){
+        mSerial.readAll();
+        mSerial.clear();
+    }
+}
+
+void DaqBoard1::init()
+{
+    clear();
+}
+void DaqBoard1::start()
+{
+    clear();
 }
 void DaqBoard1::stop()
 {
     dac.dac1 = 2048;
     dac.dac2 = 2048;
     syncOutputs();
-    mSerial.close();
+    clear();
 }
 void DaqBoard1::pause()
 {
@@ -40,15 +62,10 @@ void DaqBoard1::pause()
 }
 void DaqBoard1::resume()
 {
-    //do nothing
 }
 void DaqBoard1::reset()
 {
-    enc.enc1 = 0;
-    enc.enc2 = 0;
-    dac.dac1 = 2048;
-    dac.dac2 = 2048;
-    mSerialBuf.clear();
+    clear();
 }
 int DaqBoard1::enableInput(QString name)
 {
@@ -73,6 +90,8 @@ double DaqBoard1::getInput(int id)
 }
 void DaqBoard1::setOutput(int id, double value)
 {
+    if(value > 10) value = 10;
+    if(value < -10) value = -10;
     if(id == 3){
         dac.dac1 = (uint16_t)(value*2048.0/10.0+2048.0);
     }
@@ -97,7 +116,9 @@ void DaqBoard1::on_serial_read(){
             mSerialBuf.remove(0,sizeof (enc_msg_t));
         }
         else {
-            mSerialBuf.remove(0,1);
+            //debug
+            cout << mSerialBuf.size()-4 << endl;
+            mSerialBuf.remove(0,mSerialBuf.size()-sizeof (enc_msg_t));
         }
     }
 }

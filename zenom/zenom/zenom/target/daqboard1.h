@@ -10,6 +10,7 @@ class DaqBoard1 : public board
     Q_OBJECT
 public:
     DaqBoard1(QObject *parent = nullptr);
+    virtual void setComPort(QString name);
     virtual void init();
     virtual void start();
     virtual void stop();
@@ -48,6 +49,8 @@ private:
 
     enc_msg_t enc;
     dac_msg_t dac;
+
+    void clear();
 };
 
 #endif // DAQBOARD1_H

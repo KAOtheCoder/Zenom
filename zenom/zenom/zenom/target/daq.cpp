@@ -65,6 +65,7 @@ void daq::sendStateRequest(StateRequest pRequest)
         setControlsStatus(true);
         updateTables();
         selectedBoard->init();
+        selectedBoard->setComPort(ui->cbPorts->currentText());
     }
     else if(pRequest == R_START){
         state = RUNNING;
@@ -98,6 +99,11 @@ void daq::sendStateRequest(StateRequest pRequest)
         setControlsStatus(true);
         selectedBoard->stop();
         loop_end();
+
+        //set 0 all inputs.
+        for (const auto i : input_lookup){
+            cntrVariables[i.varIndex]->setHeapElement(i.row, i.col, 0);
+        }
     }
     else if(pRequest == R_TERMINATE){
         state = TERMINATED;
