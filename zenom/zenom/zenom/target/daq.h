@@ -9,6 +9,7 @@
 #include <QSerialPortInfo>
 #include <QTimer>
 #include <QDebug>
+#include <QSettings>
 #include "targettask.h"
 #include "board.h"
 #include "daqboard1.h"
@@ -30,6 +31,8 @@ public:
 
     void setFrequency(double freq);
     int doloop();
+    void saveSettings( QSettings& pSettings );
+    void loadSettings( QSettings& pSettings );
     State state;
 
 private slots:

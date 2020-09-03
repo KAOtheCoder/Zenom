@@ -298,3 +298,68 @@ void daq::setControlsStatus(bool stat)
     ui->cbPorts->setEnabled(stat);
     ui->cbBoards->setEnabled(stat);
 }
+
+void daq::saveSettings( QSettings& pSettings )
+{
+    pSettings.beginGroup("Target");
+    pSettings.setValue("geometry", saveGeometry());
+    pSettings.setValue("visible", isVisible());
+    pSettings.setValue("board", ui->cbBoards->currentText());
+    pSettings.setValue("input_size", ui->tblIn->rowCount());
+    for(int i=0; i<ui->tblIn->rowCount(); i++){
+        pSettings.beginGroup("input" + QString::number(i));
+        if(ui->tblIn->item(i,1) == nullptr)
+            pSettings.setValue("var", "");
+        else
+            pSettings.setValue("var",ui->tblIn->item(i,1)->text() );
+        pSettings.endGroup();
+    }
+    pSettings.setValue("output_size", ui->tblOut->rowCount());
+    for(int i=0; i<ui->tblOut->rowCount(); i++){
+        pSettings.beginGroup("output" + QString::number(i));
+        if(ui->tblOut->item(i,1) == nullptr)
+            pSettings.setValue("var", "");
+        else
+            pSettings.setValue("var",ui->tblOut->item(i,1)->text() );
+        pSettings.endGroup();
+    }
+    pSettings.endGroup();
+}
+
+void daq::loadSettings( QSettings& pSettings )
+{
+    pSettings.beginGroup("Target");
+    restoreGeometry( pSettings.value("geometry").toByteArray() );
+    setVisible( pSettings.value("visible").toBool() );
+    QString boardName = pSettings.value("board").toString();
+    int index = ui->cbBoards->findData(boardName);
+    if ( index != -1 ) { // -1 for not found
+       ui->cbBoards->setCurrentIndex(index);
+    }
+    for (auto b : boards){
+        if(b->name.compare(boardName) == 0){
+            selectedBoard = b;
+            updateTables();
+            break;
+        }
+    }
+    int insize = pSettings.value("input_size", 0).toInt();
+    for ( int i = 0; i < insize; ++i )
+    {
+        pSettings.beginGroup( QString("input") + QString::number(i) );
+        QString varName = pSettings.value("var").toString();
+        QTableWidgetItem *item = new QTableWidgetItem(varName);
+        ui->tblIn->setItem(i,1,item);
+        pSettings.endGroup();
+    }
+    int outsize = pSettings.value("output_size", 0).toInt();
+    for ( int i = 0; i < outsize; ++i )
+    {
+        pSettings.beginGroup( QString("output") + QString::number(i) );
+        QString varName = pSettings.value("var").toString();
+        QTableWidgetItem *item = new QTableWidgetItem(varName);
+        ui->tblOut->setItem(i,1,item);
+        pSettings.endGroup();
+    }
+    pSettings.endGroup();
+}

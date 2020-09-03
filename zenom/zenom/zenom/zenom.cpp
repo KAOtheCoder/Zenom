@@ -354,6 +354,7 @@ void Zenom::loadSettings(const QString &pProjectName)
     mGaugeManager->loadSettings( settings );            // gauges
     mPlotManager->loadSettings( settings );             // plots
     mSceneManager->loadSettings( settings );            // scenes
+    mDaq->loadSettings( settings );
     settings.endGroup();
 
     QApplication::restoreOverrideCursor();
@@ -375,6 +376,7 @@ void Zenom::on_actionSave_Project_triggered()
     mGaugeManager->saveSettings( settings );            // gauges
     mPlotManager->saveSettings( settings );             // plots
     mSceneManager->saveSettings( settings );            // scenes
+    mDaq->saveSettings( settings );
     settings.endGroup();
 
     QApplication::restoreOverrideCursor();
