@@ -3,6 +3,7 @@
 #include <datarepository.h>
 #include <unistd.h>
 #include <iostream>
+#include <unistd.h>
 
 #include "messagelistenertask.h"
 #include "zenom.h"
@@ -46,6 +47,7 @@ void MessageListenerTask::run()
                     break;
             }
         }
+        usleep(100*1000); //100ms 10hz
     }
 }
 
