@@ -6,6 +6,7 @@
 #include <QStringList>
 #include <QSerialPort>
 #include <list>
+#include "threadedserial.h"
 
 using namespace std;
 
@@ -13,9 +14,9 @@ class board : public QObject
 {
     Q_OBJECT
 public:
-    board(QObject *parent = Q_NULLPTR);
+    board();
     virtual ~board();
-    virtual void setComPort(QString name);
+    virtual void setComPort(QString name) = 0;
     virtual void setFrequency(int freq);
     virtual QStringList getInputList();
     virtual QStringList getOutputList();
@@ -36,9 +37,20 @@ public:
     virtual void openSettingsDialog() = 0;
     QString name;
 
+signals:
+    void open(QString portName, qint32 baudrate);
+    void isOpen();
+    void close();
+    void clear();
+    void write(QByteArray data);
 
 protected:
-    QSerialPort mSerial;
+    void serialOpen(QString portName, qint32 baudrate);
+    void serialIsOpen();
+    void serialClose();
+    void serialClear();
+    void serialWrite(QByteArray data);
+    ThreadedSerial *mSerial;
     QByteArray mSerialBuf;
     double mFreq;
 

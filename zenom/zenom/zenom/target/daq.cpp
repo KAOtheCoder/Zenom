@@ -13,7 +13,7 @@ daq::daq(QWidget *parent) :
     mStatusBar->setMaximumHeight(20);
 
     updateComPortList();
-    registerBoard(new DaqBoard1(this));
+    registerBoard(new DaqBoard1());
     updateTables();
 }
 

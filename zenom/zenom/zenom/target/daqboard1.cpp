@@ -1,10 +1,9 @@
 #include "daqboard1.h"
 
-DaqBoard1::DaqBoard1(QObject *parent) :
-    board(parent)
+DaqBoard1::DaqBoard1() :
+    board()
 {
     name = "DaqBoard1";
-    mSerial.setBaudRate(1000000);
     reset();
 
     inputs.insert(inputs.end(), "ENC1");
@@ -13,17 +12,10 @@ DaqBoard1::DaqBoard1(QObject *parent) :
     outputs.insert(outputs.end(), "DAC1");
     outputs.insert(outputs.end(), "DAC2");
 
-    connect(&mSerial, SIGNAL(readyRead()), SLOT(on_serial_read()));
+    connect(mSerial, SIGNAL(data_ready(QByteArray)), SLOT(on_serial_read(QByteArray)));
 }
 void DaqBoard1::setComPort(QString name){
-    if(mSerial.isOpen()){
-        if(mSerial.portName() == name) return;
-        mSerial.close();
-    }
-    mSerial.setPortName(name);
-    if(!mSerial.open(QIODevice::ReadWrite)){
-        cout << "[TARGET] Couldn't open serial port!";
-    }
+    serialOpen(name, 1000000);
     clear();
 }
 
@@ -33,10 +25,7 @@ void DaqBoard1::clear(){
     dac.dac1 = 2048;
     dac.dac2 = 2048;
     mSerialBuf.clear();
-    if(mSerial.isOpen()){
-        mSerial.readAll();
-        mSerial.clear();
-    }
+    serialClear();
 }
 
 void DaqBoard1::init()
@@ -101,15 +90,14 @@ void DaqBoard1::setOutput(int id, double value)
 }
 void DaqBoard1::syncOutputs()
 {
-    mSerial.write((char*)&dac, sizeof(dac_msg_t));
-    mSerial.flush();
+    serialWrite(QByteArray::fromRawData((char*)&dac, sizeof(dac_msg_t)));
 }
 void DaqBoard1::openSettingsDialog()
 {
     //do nothing
 }
-void DaqBoard1::on_serial_read(){
-    mSerialBuf.append(mSerial.readAll());
+void DaqBoard1::on_serial_read(QByteArray data){
+    mSerialBuf.append(data);
     while(mSerialBuf.size() >= sizeof (enc_msg_t)){
         if(mSerialBuf.size() == sizeof (enc_msg_t)){
             memcpy(&enc, mSerialBuf.data(), sizeof(enc_msg_t));

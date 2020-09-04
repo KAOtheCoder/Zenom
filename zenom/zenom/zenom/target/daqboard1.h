@@ -9,7 +9,7 @@ class DaqBoard1 : public board
 {
     Q_OBJECT
 public:
-    DaqBoard1(QObject *parent = nullptr);
+    DaqBoard1();
     virtual void setComPort(QString name);
     virtual void init();
     virtual void start();
@@ -28,7 +28,7 @@ public:
     virtual void openSettingsDialog();
 
 private slots:
-    void on_serial_read();
+    void on_serial_read(QByteArray data);
 
 private:
     #pragma pack(push, 1)
