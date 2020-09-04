@@ -54,6 +54,7 @@ private:
 	double ke[2];
 
 	const double Deg2Rad = 0.017453292519943;
+	const double pi = 3.14159265359;
 };
 
 /**
@@ -206,6 +207,10 @@ int TargetTest::doloop()
 	// integrate ef
 	ef[0] = mEfdotIntegrator[0].integrate(rf[0]-ef[0]);
 	ef[1] = mEfdotIntegrator[1].integrate(rf[1]-ef[1]);
+
+	//to see errors in degree form
+	e[0] = e[0] * 180 / pi;
+	e[1] = e[1] * 180 / pi;
 
 	return 0;
 }
