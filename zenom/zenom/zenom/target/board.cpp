@@ -1,35 +1,30 @@
 #include "board.h"
 
-board::board() :
-    QObject (nullptr)
+board::board(QObject *parent)
+    : QObject (parent)
+    , mSerial (this)
+    , baudrate(0)
 {
     name = "not specified";
-    mSerial = new ThreadedSerial();
-    moveToThread(mSerial);
-
-    connect(this, SIGNAL(open(QString, qint32)), mSerial, SLOT(open(QString, qint32)));
-    connect(this, SIGNAL(isOpen()), mSerial, SLOT(isOpen()));
-    connect(this, SIGNAL(close()), mSerial, SLOT(close()));
-    connect(this, SIGNAL(clear()), mSerial, SLOT(clear()));
-    connect(this, SIGNAL(write(QByteArray)), mSerial, SLOT(write(QByteArray)));
+    connect(&mSerial, SIGNAL(readyRead()), this, SLOT(on_serial_read()));
 }
 
 board::~board() = default;
 
-void board::serialOpen(QString portName, qint32 baudrate){
-    emit open(portName, baudrate);
-}
-void board::serialIsOpen(){
-    emit isOpen();
-}
-void board::serialClose(){
-    emit close();
-}
-void board::serialClear(){
-    emit clear();
-}
-void board::serialWrite(QByteArray data){
-    emit write(data);
+void board::serialOpen(QString portName){
+    if(mSerial.portName() != portName){
+        if(mSerial.isOpen())
+            mSerial.close();
+        mSerial.setBaudRate(baudrate);
+        mSerial.setPortName(portName);
+        mSerial.open(QIODevice::ReadWrite);
+    }
+    if(!mSerial.isOpen()){
+        mSerial.setBaudRate(baudrate);
+        mSerial.setPortName(portName);
+        mSerial.open(QIODevice::ReadWrite);
+    }
+    clear();
 }
 
 void board::setFrequency(int freq){

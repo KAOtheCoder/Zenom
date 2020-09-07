@@ -6,17 +6,17 @@
 #include <QStringList>
 #include <QSerialPort>
 #include <list>
-#include "threadedserial.h"
 
 using namespace std;
 
+//This is an abstract class for target board implementation
+//it can run with QT's main event loop or it can run multithreaded via BoardWrapper class.
 class board : public QObject
 {
     Q_OBJECT
 public:
-    board();
+    board(QObject *parent = nullptr);
     virtual ~board();
-    virtual void setComPort(QString name) = 0;
     virtual void setFrequency(int freq);
     virtual QStringList getInputList();
     virtual QStringList getOutputList();
@@ -35,24 +35,23 @@ public:
     virtual void setOutput(int id, double value) = 0;
     virtual void syncOutputs() = 0;
     virtual void openSettingsDialog() = 0;
+    virtual void clear() = 0;
     QString name;
 
-signals:
-    void open(QString portName, qint32 baudrate);
-    void isOpen();
-    void close();
-    void clear();
-    void write(QByteArray data);
+//All slots will be executed by the event loop that this object belongs to
+public slots:
+    //this code should run in the target thread.
+    //So make it slot in order to run in new event loop
+    void serialOpen(QString portName);
+
+protected slots:
+    virtual void on_serial_read() = 0;
 
 protected:
-    void serialOpen(QString portName, qint32 baudrate);
-    void serialIsOpen();
-    void serialClose();
-    void serialClear();
-    void serialWrite(QByteArray data);
-    ThreadedSerial *mSerial;
+    QSerialPort mSerial;
     QByteArray mSerialBuf;
     double mFreq;
+    qint32 baudrate;
 
     QStringList inputs;
     QStringList outputs;

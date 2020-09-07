@@ -11,7 +11,7 @@
 #include <QDebug>
 #include <QSettings>
 #include "targettask.h"
-#include "board.h"
+#include "boardwrapper.h"
 #include "daqboard1.h"
 
 namespace Ui {
@@ -59,8 +59,8 @@ private:
     void loop_start();
     void loop_end();
 
-    list<board*> boards;
-    board *selectedBoard;
+    list<BoardWrapper*> boards;
+    BoardWrapper *selectedBoard;
     void registerBoard(board *boardPtr);
     void updateTables();
     void updateComPortList();

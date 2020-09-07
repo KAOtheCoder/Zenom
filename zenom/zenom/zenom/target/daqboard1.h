@@ -3,14 +3,16 @@
 
 #include "board.h"
 #include <iostream>
+#include <QReadWriteLock>
+#include <QReadLocker>
+#include <QWriteLocker>
 
 using namespace std;
 class DaqBoard1 : public board
 {
     Q_OBJECT
 public:
-    DaqBoard1();
-    virtual void setComPort(QString name);
+    DaqBoard1(QObject *parent = nullptr);
     virtual void init();
     virtual void start();
     virtual void stop();
@@ -26,9 +28,10 @@ public:
     virtual void setOutput(int id, double value);
     virtual void syncOutputs();
     virtual void openSettingsDialog();
+    virtual void clear();
 
-private slots:
-    void on_serial_read(QByteArray data);
+protected slots:
+    virtual void on_serial_read();
 
 private:
     #pragma pack(push, 1)
@@ -47,10 +50,11 @@ private:
 
     const double pi = 3.14159265359;
 
+    QReadWriteLock enc_lock;
+    QReadWriteLock dac_lock;
     enc_msg_t enc;
     dac_msg_t dac;
 
-    void clear();
 };
 
 #endif // DAQBOARD1_H

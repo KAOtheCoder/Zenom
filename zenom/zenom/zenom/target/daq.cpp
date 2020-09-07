@@ -19,14 +19,18 @@ daq::daq(QWidget *parent) :
 
 daq::~daq()
 {
+    for (auto b : boards){
+        delete b;
+    }
     delete ui;
 }
 
 void daq::registerBoard(board *boardPtr){
-    boards.insert(boards.end(), boardPtr);
+    BoardWrapper *wrapper = new BoardWrapper(this, boardPtr);
+    boards.insert(boards.end(), wrapper);
     ui->cbBoards->addItem(boardPtr->name);
     if(boards.size() == 1){
-        selectedBoard = boardPtr;
+        selectedBoard = wrapper;
     }
 }
 
@@ -35,15 +39,15 @@ int daq::doloop(){
     tickCnt++;
     if(state == RUNNING){
         for (const auto i : input_lookup){
-            cntrVariables[i.varIndex]->setHeapElement(i.row, i.col, selectedBoard->getInput(i.targetID));
+            cntrVariables[i.varIndex]->setHeapElement(i.row, i.col, selectedBoard->target->getInput(i.targetID));
         }
 
         for (const auto i : output_lookup){
             if(logVariables[i.varIndex]->isHeapValid()){
-                selectedBoard->setOutput(i.targetID, logVariables[i.varIndex]->lastHeapElement(i.row, i.col));
+                selectedBoard->target->setOutput(i.targetID, logVariables[i.varIndex]->lastHeapElement(i.row, i.col));
             }
         }
-        selectedBoard->syncOutputs();
+        selectedBoard->target->syncOutputs();
     } //running
     return 0;
 }
@@ -64,8 +68,8 @@ void daq::sendStateRequest(StateRequest pRequest)
 
         setControlsStatus(true);
         updateTables();
-        selectedBoard->init();
-        selectedBoard->setComPort(ui->cbPorts->currentText());
+        selectedBoard->target->init();
+        selectedBoard->serialOpen(ui->cbPorts->currentText());
     }
     else if(pRequest == R_START){
         state = RUNNING;
@@ -73,8 +77,8 @@ void daq::sendStateRequest(StateRequest pRequest)
 
         updateLookupTable();
         setControlsStatus(false);
-        selectedBoard->setComPort(ui->cbPorts->currentText());
-        selectedBoard->start();
+        selectedBoard->serialOpen(ui->cbPorts->currentText());
+        selectedBoard->target->start();
         loop_start();
     }
     else if(pRequest == R_PAUSE){
@@ -82,14 +86,14 @@ void daq::sendStateRequest(StateRequest pRequest)
         mStatusBar->showMessage("PAUSED");
 
         setControlsStatus(true);
-        selectedBoard->pause();
+        selectedBoard->target->pause();
     }
     else if(pRequest == R_RESUME){
         state = RUNNING;
         mStatusBar->showMessage("RESUMED");
 
         setControlsStatus(false);
-        selectedBoard->resume();
+        selectedBoard->target->resume();
     }
     else if(pRequest == R_STOP){
         state = STOPPED;
@@ -97,7 +101,7 @@ void daq::sendStateRequest(StateRequest pRequest)
 
         tickCnt = 0;
         setControlsStatus(true);
-        selectedBoard->stop();
+        selectedBoard->target->stop();
         loop_end();
 
         //set 0 all inputs.
@@ -110,7 +114,7 @@ void daq::sendStateRequest(StateRequest pRequest)
         mStatusBar->showMessage("TERMINATED");
 
         setControlsStatus(true);
-        selectedBoard->reset();
+        selectedBoard->target->reset();
     }
 }
 
@@ -190,7 +194,7 @@ void daq::updateLookupTable()
         QString varName = ui->tblIn->item(i,1)->text();
         QString channel = ui->tblIn->item(i,0)->text();
         if( varName != ""){
-            input_lookup.append(createLookupEntry(varName, selectedBoard->enableInput(channel)));
+            input_lookup.append(createLookupEntry(varName, selectedBoard->target->enableInput(channel)));
         }
     }
 
@@ -199,7 +203,7 @@ void daq::updateLookupTable()
         QString varName = ui->tblOut->item(i,1)->text();
         QString channel = ui->tblOut->item(i,0)->text();
         if( varName != ""){
-            output_lookup.append(createLookupEntry(varName, selectedBoard->enableOutput(channel)));
+            output_lookup.append(createLookupEntry(varName, selectedBoard->target->enableOutput(channel)));
         }
     }
 }
@@ -214,8 +218,8 @@ void daq::updateTables(){
     if(ui->tblIn->itemDelegateForColumn(1) != nullptr)
         delete ui->tblIn->itemDelegateForColumn(1);
 
-    QStringList inputs = selectedBoard->getInputList();
-    QStringList outputs = selectedBoard->getOutputList();
+    QStringList inputs = selectedBoard->target->getInputList();
+    QStringList outputs = selectedBoard->target->getOutputList();
 
     ui->tblIn->setRowCount(inputs.length());
     for(int i=0; i<inputs.length(); i++){
@@ -270,7 +274,7 @@ void daq::on_cbBoards_currentIndexChanged(const QString &arg1)
 {
     updateComPortList();
     for (auto b : boards){
-        if(b->name.compare(arg1) == 0){
+        if(b->target->name.compare(arg1) == 0){
             selectedBoard = b;
             updateTables();
             cout << "selected board: " << arg1.toStdString() << endl;
@@ -281,12 +285,12 @@ void daq::on_cbBoards_currentIndexChanged(const QString &arg1)
 
 void daq::on_pb_reset_clicked()
 {
-    selectedBoard->reset();
+    selectedBoard->target->reset();
 }
 
 void daq::on_pb_settings_clicked()
 {
-   selectedBoard->openSettingsDialog();
+   selectedBoard->target->openSettingsDialog();
 }
 
 void daq::setControlsStatus(bool stat)
@@ -337,7 +341,7 @@ void daq::loadSettings( QSettings& pSettings )
        ui->cbBoards->setCurrentIndex(index);
     }
     for (auto b : boards){
-        if(b->name.compare(boardName) == 0){
+        if(b->target->name.compare(boardName) == 0){
             selectedBoard = b;
             updateTables();
             break;
