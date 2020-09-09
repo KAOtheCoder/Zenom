@@ -30,9 +30,6 @@ private:
 	double tau[2];
 	double e[2];
 	double ed[2];
-	double d[2];
-	double dd[2];
-	double qd[2];
 
 
 	// ----- Control Parameters -----
@@ -50,6 +47,9 @@ private:
 	Integrator< double > mrInt[2];  // p_dot integrator
 	Differentiator< double > mqDiff[2]; // q differentiator
 
+	double d[2];
+	double dd[2];
+	double qd[2];
 	double r[2];
 	double rint[2];
 	double deltaE[2];
@@ -74,9 +74,6 @@ int TargetTest::initialize()
 	registerLogVariable(tau, "tau", 1, 2);
 	registerLogVariable(e, "e", 1, 2);
 	registerLogVariable(ed, "ed", 1, 2);
-	registerLogVariable(d, "d", 1, 2);
-	registerLogVariable(dd, "dd", 1, 2);
-	registerLogVariable(qd, "qd", 1, 2);
 
 	// ----- Register the control paramateres -----
 	registerControlVariable(q, "q", 1, 2);
@@ -113,7 +110,7 @@ int TargetTest::initialize()
 
 	// ----- Prints message in screen -----
 	std::cout
-		<< "Position Constrained Ouptut Feedback Nonlinear PI for 2-link planar robot "
+		<< "Position Constrained Full State Feedback Nonlinear PI for 2-link planar robot "
 		<< std::endl << std::endl;
 
 	return 0;
@@ -133,16 +130,16 @@ int TargetTest::start()
 	mrInt[1].setSamplingPeriod( period() );
 	mrInt[1].reset( 0 );
 
-	mqDiff[0].setSamplingPeriod( period() );
 	mqDiff[0].reset();
+	mqDiff[0].setSamplingPeriod( period() );
 	mqDiff[0].enableFilter();
 	mqDiff[0].setDampingRatio(1);
-	mqDiff[0].setCutOffFrequencyHz(1.0/(2.0*period()));
+	mqDiff[0].setCutOffFrequencyHz(500);
 
-	mqDiff[1].setSamplingPeriod( period() );
 	mqDiff[1].reset();
+	mqDiff[1].setSamplingPeriod( period() );
 	mqDiff[1].setDampingRatio(1);
-	mqDiff[1].setCutOffFrequencyHz(1.0/(2.0*period()));
+	mqDiff[1].setCutOffFrequencyHz(500);
 
 	q[0] = 0;
 	q[1] = 0;
@@ -185,8 +182,8 @@ int TargetTest::doloop()
 	t3 = pow(t,3);
 	d[0] = a[0] * sin(t*freq[0]) * (1-exp(-0.3 * t3));
 	d[1] = a[1] * sin(t*freq[1]) * (1-exp(-0.3 * t3));
-	dd[0]= a[0]*(3*cos(t*freq[0])*(1-exp(-0.3*t3))+0.9*t2*exp(-0.3*t3)*sin(t*freq[0]));
-	dd[1]= a[1]*(3*cos(t*freq[1])*(1-exp(-0.3*t3))+0.9*t2*exp(-0.3*t3)*sin(t*freq[1]));
+	dd[0]= a[0]*(freq[0]*cos(t*freq[0])*(1-exp(-0.3*t3))+0.9*t2*exp(-0.3*t3)*sin(t*freq[0]));
+	dd[1]= a[1]*(freq[1]*cos(t*freq[1])*(1-exp(-0.3*t3))+0.9*t2*exp(-0.3*t3)*sin(t*freq[1]));
 
 	// error
 	e[0] = d[0] - q[0] ;
@@ -216,15 +213,15 @@ int TargetTest::doloop()
 	ed[1] = ed[1] * 180 / pi;
 
 	// for robot
-	tau[0] = tau[0] * 10 / 287;
-	tau[1] = tau[1] * -10 / 52;
+	tau[0] = tau[0] * 10.0 / 287.0;
+	tau[1] = tau[1] * -10.0 / 52.0;
 
 	// bound tau
-	if(tau[0] > 10) tau[0] = 10;
-	if(tau[0] < -10) tau[0] = -10;
+	if(tau[0] > 9.6) tau[0] = 9.6;
+	if(tau[0] < -9.6) tau[0] = -9.6;
 
-	if(tau[1] > 10) tau[1] = 10;
-	if(tau[1] < -10) tau[1] = -10;
+	if(tau[1] > 9.6) tau[1] = 9.6;
+	if(tau[1] < -9.6) tau[1] = -9.6;
 
 	return 0;
 }
