@@ -15,9 +15,11 @@ public:
     QThread boardThread;
     board *target;
     void serialOpen(QString portName);
+    void serialSync();
 
 signals:
     void open(QString portName);
+    void sync();
 
 };
 

@@ -33,7 +33,6 @@ public:
     //if you want to acces an I/O you should supply this ID
     virtual double getInput(int id) = 0;
     virtual void setOutput(int id, double value) = 0;
-    virtual void syncOutputs() = 0;
     virtual void openSettingsDialog() = 0;
     virtual void clear() = 0;
     virtual quint32 getMissedReads();
@@ -44,6 +43,7 @@ public slots:
     //this code should run in the target thread.
     //So make it slot in order to run in new event loop
     void serialOpen(QString portName);
+    virtual void serialSync() = 0;
 
 protected slots:
     virtual void on_serial_read() = 0;

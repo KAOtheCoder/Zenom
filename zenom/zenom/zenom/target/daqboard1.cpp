@@ -20,7 +20,7 @@ void DaqBoard1::clear(){
     dac.dac1 = 2048; //2048 = 0V
     dac.dac2 = 2048; //2048 = 0V
     missCnt = 0;
-    syncOutputs();
+    serialSync();
     mSerialBuf.clear();
     if(mSerial.isOpen())
         mSerial.clear();
@@ -40,7 +40,7 @@ void DaqBoard1::stop()
 }
 void DaqBoard1::pause()
 {
-    syncOutputs();
+    serialSync();
 }
 void DaqBoard1::resume()
 {
@@ -86,9 +86,9 @@ void DaqBoard1::setOutput(int id, double value)
         dac.dac2 = (uint16_t)(value*2048.0/10.0+2048.0);
     }
 }
-void DaqBoard1::syncOutputs()
+void DaqBoard1::serialSync()
 {
-    if(!mSerial.isOpen()) return;
+    //if(!mSerial.isOpen()) return;
     QReadLocker locker(&dac_lock);
     mSerial.write(QByteArray::fromRawData((char*)&dac, sizeof(dac_msg_t)));
 }

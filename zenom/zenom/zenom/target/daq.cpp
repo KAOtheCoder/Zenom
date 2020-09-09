@@ -48,7 +48,7 @@ int daq::doloop(){
                 selectedBoard->target->setOutput(i.targetID, logVariables[i.varIndex]->lastHeapElement(i.row, i.col));
             }
         }
-        selectedBoard->target->syncOutputs();
+        selectedBoard->serialSync();
     } //running
     return 0;
 }

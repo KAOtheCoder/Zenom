@@ -26,9 +26,11 @@ public:
     //if you want to acces an I/O you should supply this ID
     virtual double getInput(int id);
     virtual void setOutput(int id, double value);
-    virtual void syncOutputs();
     virtual void openSettingsDialog();
     virtual void clear();
+
+public slots:
+    virtual void serialSync();
 
 protected slots:
     virtual void on_serial_read();
