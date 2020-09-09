@@ -26,6 +26,7 @@ void LoopTask::run()
     {
         if( mControlBase->mState != PAUSED )
         {
+            mControlBase->syncMainHeap();
             try
             {
                 error = mControlBase->doloop();			// User Function
@@ -47,10 +48,7 @@ void LoopTask::run()
                 std::cerr << "An unknown exception occured in the doloop()"
                              " function." << std::endl;
             }
-
-
             mControlBase->logVariables( elapsedTimeSec() );
-            mControlBase->syncMainHeap();
         }
 
         if( elapsedTimeSec() > mControlBase->duration() || error )
@@ -58,6 +56,6 @@ void LoopTask::run()
             DataRepository::instance()->sendStateRequest( R_STOP );
             this->requestPeriodicTaskTermination();
         }
-	}
+    }
 
 }
