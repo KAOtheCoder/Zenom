@@ -19,6 +19,7 @@ void DaqBoard1::clear(){
     enc.enc2 = 0;
     dac.dac1 = 2048; //2048 = 0V
     dac.dac2 = 2048; //2048 = 0V
+    missCnt = 0;
     syncOutputs();
     mSerialBuf.clear();
     if(mSerial.isOpen())
@@ -104,8 +105,7 @@ void DaqBoard1::on_serial_read(){
             mSerialBuf.remove(0,sizeof (enc_msg_t));
         }
         else {
-            //debug
-            cout << mSerialBuf.size()-4 << endl;
+            missCnt += (mSerialBuf.size()-4)/4;
             mSerialBuf.remove(0,mSerialBuf.size()-sizeof (enc_msg_t));
         }
     }

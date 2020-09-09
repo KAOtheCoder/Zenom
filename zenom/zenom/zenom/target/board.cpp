@@ -4,6 +4,7 @@ board::board(QObject *parent)
     : QObject (parent)
     , mSerial (this)
     , baudrate(0)
+    , missCnt(0)
 {
     name = "not specified";
     connect(&mSerial, SIGNAL(readyRead()), this, SLOT(on_serial_read()));
@@ -37,4 +38,9 @@ QStringList board::getInputList(){
 
 QStringList board::getOutputList(){
     return outputs;
+}
+
+quint32 board::getMissedReads()
+{
+    return missCnt;
 }

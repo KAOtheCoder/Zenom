@@ -189,6 +189,7 @@ void Zenom::doloop()
     mPlotManager->tick();
     mSceneManager->tick();
     mCameraManager->tick();
+    mDaq->tick();
 }
 
 State Zenom::simulationState()

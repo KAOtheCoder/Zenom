@@ -36,6 +36,7 @@ public:
     virtual void syncOutputs() = 0;
     virtual void openSettingsDialog() = 0;
     virtual void clear() = 0;
+    virtual quint32 getMissedReads();
     QString name;
 
 //All slots will be executed by the event loop that this object belongs to
@@ -55,6 +56,8 @@ protected:
 
     QStringList inputs;
     QStringList outputs;
+
+    quint32 missCnt;
 };
 
 #endif // BOARD_H

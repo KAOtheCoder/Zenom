@@ -33,6 +33,7 @@ public:
     int doloop();
     void saveSettings( QSettings& pSettings );
     void loadSettings( QSettings& pSettings );
+    void tick();
     State state;
 
 private slots:

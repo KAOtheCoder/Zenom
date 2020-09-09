@@ -6,7 +6,8 @@ daq::daq(QWidget *parent) :
     ui(new Ui::daq),
     cntrVariables(DataRepository::instance()->controlVariables()),
     logVariables(DataRepository::instance()->logVariables()),
-    tickCnt(0)
+    tickCnt(0),
+    mLoopTask(nullptr)
 {
     ui->setupUi(this);
     ui->verticalLayout->addWidget(mStatusBar = new QStatusBar());
@@ -64,43 +65,31 @@ void daq::sendStateRequest(StateRequest pRequest)
 {
     if(pRequest == R_INIT){
         state = STOPPED;
-        mStatusBar->showMessage("Init");
 
-        setControlsStatus(true);
         updateTables();
         selectedBoard->target->init();
         selectedBoard->serialOpen(ui->cbPorts->currentText());
     }
     else if(pRequest == R_START){
         state = RUNNING;
-        mStatusBar->showMessage("START");
 
         updateLookupTable();
-        setControlsStatus(false);
         selectedBoard->serialOpen(ui->cbPorts->currentText());
         selectedBoard->target->start();
         loop_start();
     }
     else if(pRequest == R_PAUSE){
         state = PAUSED;
-        mStatusBar->showMessage("PAUSED");
-
-        setControlsStatus(true);
         selectedBoard->target->pause();
     }
     else if(pRequest == R_RESUME){
         state = RUNNING;
-        mStatusBar->showMessage("RESUMED");
-
-        setControlsStatus(false);
         selectedBoard->target->resume();
     }
     else if(pRequest == R_STOP){
         state = STOPPED;
-        mStatusBar->showMessage("STOPPED");
 
         tickCnt = 0;
-        setControlsStatus(true);
         selectedBoard->target->stop();
         loop_end();
 
@@ -111,11 +100,10 @@ void daq::sendStateRequest(StateRequest pRequest)
     }
     else if(pRequest == R_TERMINATE){
         state = TERMINATED;
-        mStatusBar->showMessage("TERMINATED");
-
-        setControlsStatus(true);
         selectedBoard->target->reset();
     }
+    //to update ui
+    tick();
 }
 
 QStringList daq::variableName(Variable *var){
@@ -268,6 +256,7 @@ void daq::loop_end(){
     mLoopTask->requestPeriodicTaskTermination();
     mLoopTask->join();
     delete mLoopTask;
+    mLoopTask = nullptr;
 }
 
 void daq::on_cbBoards_currentIndexChanged(const QString &arg1)
@@ -366,4 +355,40 @@ void daq::loadSettings( QSettings& pSettings )
         pSettings.endGroup();
     }
     pSettings.endGroup();
+}
+
+void daq::tick()
+{
+    QString msg;
+    switch (state) {
+    case STOPPED:
+        msg += "Stopped";
+        setControlsStatus(true);
+        break;
+    case RUNNING:
+        msg += "Running";
+        setControlsStatus(false);
+        break;
+    case PAUSED:
+        msg += "Paused";
+        setControlsStatus(true);
+        break;
+    case TERMINATED:
+        msg += "Terminated";
+        setControlsStatus(true);
+        break;
+    case CRASHED:
+        msg += "Crashed";
+        setControlsStatus(true);
+        break;
+    }
+    msg += "\t\t";
+    if(mLoopTask != nullptr){
+        msg += "Overruns: ";
+        msg += QString::number(mLoopTask->overruns());
+    }
+    msg += "\t\t";
+    msg += "Read Miss: ";
+    msg += QString::number(selectedBoard->target->getMissedReads());
+    mStatusBar->showMessage(msg);
 }
