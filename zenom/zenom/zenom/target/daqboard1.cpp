@@ -79,11 +79,11 @@ void DaqBoard1::setOutput(int id, double value)
     if(value < -10) value = -10;
     if(id == 3){
         QWriteLocker locker(&dac_lock);
-        dac.dac1 = (uint16_t)(value*2048.0/10.0+2048.0);
+        dac.dac1 = (uint16_t)(value*2047.0/10.0+2048.0);
     }
     else if (id == 4) {
         QWriteLocker locker(&dac_lock);
-        dac.dac2 = (uint16_t)(value*2048.0/10.0+2048.0);
+        dac.dac2 = (uint16_t)(value*2047.0/10.0+2048.0);
     }
 }
 void DaqBoard1::serialSync()
