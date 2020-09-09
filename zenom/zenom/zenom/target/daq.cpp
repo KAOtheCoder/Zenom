@@ -223,6 +223,10 @@ void daq::updateTables(){
 
     QStringList logVarList = QStringList();
     QStringList cntVarList = QStringList();
+
+    //to be ablte select nothing from dropdown menu
+    logVarList.append("");
+    cntVarList.append("");
     for(uint i=0; i<logVariables.size(); i++){
         logVarList.append(variableName(logVariables.at(i)));
     }
