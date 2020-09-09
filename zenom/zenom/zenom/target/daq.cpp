@@ -363,36 +363,24 @@ void daq::loadSettings( QSettings& pSettings )
 
 void daq::tick()
 {
-    QString msg;
     switch (state) {
     case STOPPED:
-        msg += "Stopped";
+    case PAUSED:
+    case TERMINATED:
+    case CRASHED:
         setControlsStatus(true);
         break;
     case RUNNING:
-        msg += "Running";
+        QString msg;
+        msg += "Read Miss: ";
+        msg += QString::number(selectedBoard->target->getMissedReads());
+        if(mLoopTask != nullptr){
+            msg += "\t\t";
+            msg += "Overruns: ";
+            msg += QString::number(mLoopTask->overruns());
+        }
         setControlsStatus(false);
-        break;
-    case PAUSED:
-        msg += "Paused";
-        setControlsStatus(true);
-        break;
-    case TERMINATED:
-        msg += "Terminated";
-        setControlsStatus(true);
-        break;
-    case CRASHED:
-        msg += "Crashed";
-        setControlsStatus(true);
+        mStatusBar->showMessage(msg);
         break;
     }
-    msg += "\t\t";
-    if(mLoopTask != nullptr){
-        msg += "Overruns: ";
-        msg += QString::number(mLoopTask->overruns());
-    }
-    msg += "\t\t";
-    msg += "Read Miss: ";
-    msg += QString::number(selectedBoard->target->getMissedReads());
-    mStatusBar->showMessage(msg);
 }
