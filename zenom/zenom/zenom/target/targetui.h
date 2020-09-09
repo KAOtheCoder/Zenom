@@ -15,17 +15,17 @@
 #include "daqboard1.h"
 
 namespace Ui {
-class daq;
+class TargetUI;
 }
 
-class daq : public QDialog
+class TargetUI : public QDialog
 {
     Q_OBJECT
 
 public:
 
-    explicit daq(QWidget *parent = nullptr);
-    ~daq();
+    explicit TargetUI(QWidget *parent = nullptr);
+    ~TargetUI();
 
     void sendStateRequest(StateRequest pRequest);
 
@@ -44,7 +44,7 @@ private slots:
     void on_pb_settings_clicked();
 
 private:
-    Ui::daq *ui;
+    Ui::TargetUI *ui;
     QStatusBar *mStatusBar;
     const ControlVariableList& cntrVariables;
     const LogVariableList& logVariables;

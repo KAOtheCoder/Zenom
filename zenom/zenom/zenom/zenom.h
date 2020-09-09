@@ -26,7 +26,7 @@
 
 #include "camerascene.h"
 #include "robotmodedialog.h"
-#include "target/daq.h"
+#include "target/targetui.h"
 
 #include <fstream>
 
@@ -40,7 +40,7 @@ class Zenom : public QMainWindow
 {
     Q_OBJECT
     //friend class MessageListenerTask;
-    
+
 public:
     explicit Zenom( int argc, char *argv[] );
 
@@ -179,7 +179,7 @@ private:
     CameraScene *mCameraManager;
     // Nao Dialog
     RobotModeDialog *mRobotModeDialog;
-    daq *mDaq;
+    TargetUI *mTargetUI;
     /**
      * Arayuzde yer alan status bar aracıdır.
      */

@@ -7,9 +7,9 @@
 
 #include <iostream>
 #include "targettask.h"
-#include "daq.h"
+#include "targetui.h"
 
-TargetTask::TargetTask( daq* pDaq
+TargetTask::TargetTask( TargetUI* pDaq
                     ,std::chrono::duration<double> period
                     ,std::string name)
     : TaskXn(name, period,TaskXn::maxPriority())

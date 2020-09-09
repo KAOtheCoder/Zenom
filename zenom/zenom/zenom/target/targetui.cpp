@@ -1,9 +1,9 @@
-#include "daq.h"
-#include "ui_daq.h"
+#include "targetui.h"
+#include "ui_targetui.h"
 
-daq::daq(QWidget *parent) :
+TargetUI::TargetUI(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::daq),
+    ui(new Ui::TargetUI),
     cntrVariables(DataRepository::instance()->controlVariables()),
     logVariables(DataRepository::instance()->logVariables()),
     tickCnt(0),
@@ -18,7 +18,7 @@ daq::daq(QWidget *parent) :
     updateTables();
 }
 
-daq::~daq()
+TargetUI::~TargetUI()
 {
     for (auto b : boards){
         delete b;
@@ -26,7 +26,7 @@ daq::~daq()
     delete ui;
 }
 
-void daq::registerBoard(board *boardPtr){
+void TargetUI::registerBoard(board *boardPtr){
     BoardWrapper *wrapper = new BoardWrapper(this, boardPtr);
     boards.insert(boards.end(), wrapper);
     ui->cbBoards->addItem(boardPtr->name);
@@ -36,7 +36,7 @@ void daq::registerBoard(board *boardPtr){
 }
 
 
-int daq::doloop(){
+int TargetUI::doloop(){
     tickCnt++;
     if(state == RUNNING){
         for (const auto i : input_lookup){
@@ -52,7 +52,7 @@ int daq::doloop(){
     } //running
     return 0;
 }
-void daq::updateComPortList()
+void TargetUI::updateComPortList()
 {
     ui->cbPorts->clear();
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
@@ -61,7 +61,7 @@ void daq::updateComPortList()
 
 }
 
-void daq::sendStateRequest(StateRequest pRequest)
+void TargetUI::sendStateRequest(StateRequest pRequest)
 {
     if(pRequest == R_INIT){
         state = STOPPED;
@@ -106,7 +106,7 @@ void daq::sendStateRequest(StateRequest pRequest)
     tick();
 }
 
-QStringList daq::variableName(Variable *var){
+QStringList TargetUI::variableName(Variable *var){
     //varName
     //varName[colmn]
     //varName[row][colmn]
@@ -130,7 +130,7 @@ QStringList daq::variableName(Variable *var){
     }
     return ret;
 }
-daq::lookup_entry_t daq::createLookupEntry(QString varName, int targetID)
+TargetUI::lookup_entry_t TargetUI::createLookupEntry(QString varName, int targetID)
 {
     lookup_entry_t entry;
     QString name;
@@ -172,7 +172,7 @@ daq::lookup_entry_t daq::createLookupEntry(QString varName, int targetID)
     }
     return entry;
 }
-void daq::updateLookupTable()
+void TargetUI::updateLookupTable()
 {
     input_lookup.clear();
     output_lookup.clear();
@@ -196,7 +196,7 @@ void daq::updateLookupTable()
     }
 }
 
-void daq::updateTables(){
+void TargetUI::updateTables(){
     ui->tblOut->clear();
     ui->tblIn->clear();
 
@@ -242,11 +242,11 @@ void daq::updateTables(){
 }
 
 
-void daq::setFrequency(double freq){
+void TargetUI::setFrequency(double freq){
     mFreq = freq;
 }
 
-void daq::loop_start(){
+void TargetUI::loop_start(){
     mLoopTask = new TargetTask( this,
                                 std::chrono::duration<double>(
                                     1.0 / mFreq
@@ -256,14 +256,14 @@ void daq::loop_start(){
     mLoopTask->runTask();
 }
 
-void daq::loop_end(){
+void TargetUI::loop_end(){
     mLoopTask->requestPeriodicTaskTermination();
     mLoopTask->join();
     delete mLoopTask;
     mLoopTask = nullptr;
 }
 
-void daq::on_cbBoards_currentIndexChanged(const QString &arg1)
+void TargetUI::on_cbBoards_currentIndexChanged(const QString &arg1)
 {
     updateComPortList();
     for (auto b : boards){
@@ -276,17 +276,17 @@ void daq::on_cbBoards_currentIndexChanged(const QString &arg1)
     }
 }
 
-void daq::on_pb_reset_clicked()
+void TargetUI::on_pb_reset_clicked()
 {
     selectedBoard->target->reset();
 }
 
-void daq::on_pb_settings_clicked()
+void TargetUI::on_pb_settings_clicked()
 {
    selectedBoard->target->openSettingsDialog();
 }
 
-void daq::setControlsStatus(bool stat)
+void TargetUI::setControlsStatus(bool stat)
 {
     ui->tblIn->setEnabled(stat);
     ui->tblOut->setEnabled(stat);
@@ -296,7 +296,7 @@ void daq::setControlsStatus(bool stat)
     ui->cbBoards->setEnabled(stat);
 }
 
-void daq::saveSettings( QSettings& pSettings )
+void TargetUI::saveSettings( QSettings& pSettings )
 {
     pSettings.beginGroup("Target");
     pSettings.setValue("geometry", saveGeometry());
@@ -323,7 +323,7 @@ void daq::saveSettings( QSettings& pSettings )
     pSettings.endGroup();
 }
 
-void daq::loadSettings( QSettings& pSettings )
+void TargetUI::loadSettings( QSettings& pSettings )
 {
     pSettings.beginGroup("Target");
     restoreGeometry( pSettings.value("geometry").toByteArray() );
@@ -361,7 +361,7 @@ void daq::loadSettings( QSettings& pSettings )
     pSettings.endGroup();
 }
 
-void daq::tick()
+void TargetUI::tick()
 {
     switch (state) {
     case STOPPED:

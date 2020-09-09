@@ -27,6 +27,7 @@ SOURCES += main.cpp\
     target/board.cpp \
 	target/boardwrapper.cpp \
     target/daqboard1.cpp \
+	target/targetui.cpp \
         zenom.cpp \
     messagelistenertask.cpp \
     controlvariableswidget.cpp \
@@ -75,7 +76,6 @@ SOURCES += main.cpp\
     widget/linesizecombobox.cpp \
     camerascene.cpp \
     robotmodedialog.cpp \
-    target/daq.cpp \
     target/comboboxitemdelegate.cpp \
     target/targettask.cpp
 
@@ -86,6 +86,7 @@ HEADERS  += zenom.h \
     target/board.h \
     target/boardwrapper.h \
     target/daqboard1.h \
+    target/targetui.h \
     widget/colorbutton.h \
     widget/statusbar.h \
     widget/checkedheader.h \
@@ -130,13 +131,13 @@ HEADERS  += zenom.h \
     widget/linesizecombobox.h \
     camerascene.h \
     robotmodedialog.h \
-    target/daq.h \
     target/comboboxitemdelegate.h \
     target/targettask.h
 
 FORMS    += zenom.ui \
     controlvariableswidget.ui \
     logvariableswidget.ui \
+    target/targetui.ui \
     widget/statusbar.ui \
     gauge/radialgaugesettingwidget.ui \
     gauge/numericgaugesettingwidget.ui \
@@ -152,8 +153,7 @@ FORMS    += zenom.ui \
     plot/legenditem.ui \
     aboutdialog.ui \
     camerascene.ui \
-    robotmodedialog.ui \
-    target/daq.ui
+    robotmodedialog.ui
 
 RESOURCES += \
     zenom.qrc

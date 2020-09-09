@@ -11,18 +11,18 @@
 #include <TaskXn.h>
 #include <znm-core_global.h>
 
-class daq;
-typedef int (daq::*task_callback)(void);
+class TargetUI;
+typedef int (TargetUI::*task_callback)(void);
 
 class TargetTask: public TaskXn
 {
 public:
-    TargetTask( daq* pDaq
+    TargetTask( TargetUI* pDaq
               ,std::chrono::duration<double> period
               ,std::string name);
 
 private:
-    daq *mDaq;
+    TargetUI *mDaq;
     double mDuration;
     task_callback mTask;
     void run() override;
