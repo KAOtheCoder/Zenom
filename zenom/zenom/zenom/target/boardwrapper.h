@@ -11,6 +11,7 @@ class BoardWrapper : public QObject
     Q_OBJECT
 public:
     BoardWrapper(QObject *parent, board *targetBoard);
+    ~BoardWrapper();
     QThread boardThread;
     board *target;
     void serialOpen(QString portName);

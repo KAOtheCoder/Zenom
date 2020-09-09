@@ -17,3 +17,8 @@ BoardWrapper::BoardWrapper(QObject *parent, board *targetBoard)
 void BoardWrapper::serialOpen(QString portName){
     emit open(portName);
 }
+
+BoardWrapper::~BoardWrapper(){
+    boardThread.quit();
+    boardThread.wait();
+}
