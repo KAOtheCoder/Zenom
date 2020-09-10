@@ -13,6 +13,7 @@
 #include "targettask.h"
 #include "boardwrapper.h"
 #include "daqboard1.h"
+#include "daqboard2.h"
 
 namespace Ui {
 class TargetUI;

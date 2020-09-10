@@ -15,6 +15,7 @@ TargetUI::TargetUI(QWidget *parent) :
 
     updateComPortList();
     registerBoard(new DaqBoard1());
+    registerBoard(new DaqBoard2());
     updateTables();
 }
 
@@ -68,7 +69,6 @@ void TargetUI::sendStateRequest(StateRequest pRequest)
 
         updateTables();
         selectedBoard->target->init();
-        selectedBoard->serialOpen(ui->cbPorts->currentText());
     }
     else if(pRequest == R_START){
         state = RUNNING;
@@ -329,7 +329,7 @@ void TargetUI::loadSettings( QSettings& pSettings )
     restoreGeometry( pSettings.value("geometry").toByteArray() );
     setVisible( pSettings.value("visible").toBool() );
     QString boardName = pSettings.value("board").toString();
-    int index = ui->cbBoards->findData(boardName);
+    int index = ui->cbBoards->findText(boardName);
     if ( index != -1 ) { // -1 for not found
        ui->cbBoards->setCurrentIndex(index);
     }
