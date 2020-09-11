@@ -9,6 +9,10 @@ DaqBoard2::DaqBoard2(QObject *parent)
 
     inputs.insert(inputs.end(), "ADC1");
     inputs.insert(inputs.end(), "ADC2");
+
+    outputs.insert(outputs.end(), "SERVO1");
+    outputs.insert(outputs.end(), "SERVO2");
+    outputs.insert(outputs.end(), "SERVO3");
 }
 
 void DaqBoard2::clear(){
@@ -53,7 +57,9 @@ int DaqBoard2::enableInput(QString name)
 }
 int DaqBoard2::enableOutput(QString name)
 {
-    (void)name;
+    if(name == "SERVO1") return 3;
+    if(name == "SERVO2") return 4;
+    if(name == "SERVO3") return 5;
     return -1;
 }
 double DaqBoard2::getInput(int id)
@@ -70,12 +76,25 @@ double DaqBoard2::getInput(int id)
 }
 void DaqBoard2::setOutput(int id, double value)
 {
-    (void)id;
-    (void)value;
+    if(value < 0) value = 0;
+    if(value > 180) value = 180;
+    if(id == 3){
+        QWriteLocker locker(&servo_lock);
+        servo.servo1 = (value/180.0)*(servo_max-servo_min)+servo_min;
+    }
+    else if(id == 4){
+        QWriteLocker locker(&servo_lock);
+        servo.servo2 = (value/180.0)*(servo_max-servo_min)+servo_min;
+    }
+    else if(id == 5){
+        QWriteLocker locker(&servo_lock);
+        servo.servo3 = (value/180.0)*(servo_max-servo_min)+servo_min;
+    }
 }
 void DaqBoard2::serialSync()
 {
-    mSerial.write(QByteArray::fromRawData(dummy, 4));
+    QReadLocker locker(&servo_lock);
+    mSerial.write(QByteArray::fromRawData((char*)&servo, sizeof(servo_msg_t)));
 }
 void DaqBoard2::openSettingsDialog()
 {

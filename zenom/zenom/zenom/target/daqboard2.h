@@ -43,12 +43,23 @@ private:
     } adc_msg_t;
     #pragma pack(pop)
 
+    #pragma pack(push, 1)
+    typedef struct {
+        uint16_t servo1;
+        uint16_t servo2;
+        uint16_t servo3;
+    } servo_msg_t;
+    #pragma pack(pop)
+
     const double pi = 3.14159265359;
 
     QReadWriteLock adc_lock;
-    char dummy[4] = {0,0,0,0};
-    adc_msg_t adc;
+    QReadWriteLock servo_lock;
 
+    adc_msg_t adc;
+    servo_msg_t servo;
+    double servo_min = 950.0;
+    double servo_max = 2050.0;
 };
 
 #endif // DAQBOARD2_H
