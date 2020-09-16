@@ -64,8 +64,9 @@ private:
 	double dE[2];
 	double dR[2];
 
-	const double Deg2Rad = 0.017453292519943;
 	const double pi = 3.14159265359;
+	const double Deg2Rad = pi / 180;
+	const double Rad2Deg = 180 / pi;
 
 	double sgn(double val){
 		if(val >= 0) return 1.0;
@@ -88,6 +89,8 @@ int TargetTest::initialize()
 	registerLogVariable(e, "e", 1, 2);
 	registerLogVariable(ed, "ed", 1, 2);
 	registerLogVariable(r, "r", 1, 2);
+	registerLogVariable(kr, "kr", 1, 2);
+	registerLogVariable(ke, "ke", 1, 2);
 
 	// ----- Register the control paramateres -----
 	registerControlVariable(q, "q", 1, 2);
@@ -233,13 +236,19 @@ int TargetTest::doloop()
 	dR[1] = pow((deltaR[1]*Deg2Rad),2);
 
 	ke[0] = Ke[0] * dE[0] / (dE[0] - e[0]*e[0]);
-	ke[1] = Ke[1] * dE[1] / (dR[1] - e[1]*e[1]);
+	ke[1] = Ke[1] * dE[1] / (dE[1] - e[1]*e[1]);
+
+	if(ke[0] < 0) ke[0] = Ke[0]*5;
+	if(ke[1] < 0) ke[1] = Ke[1]*5;
 
 	r[0] = ed[0]+ke[0]*e[0];
 	r[1] = ed[1]+ke[1]*e[1];
 
 	kr[0] = Kr[0] * dR[0] / (dR[0] - r[0]*r[0]);
 	kr[1] = Kr[1] * dR[1] / (dR[1] - r[1]*r[1]);
+
+	if(kr[0] < 0) kr[0] = Kr[0]*5;
+	if(kr[1] < 0) kr[1] = Kr[1]*5;
 
 	// integrate r
 	rint[0] = mrInt[0].integrate(r[0]);
@@ -256,14 +265,14 @@ int TargetTest::doloop()
 	tau[1] = Ks[1]*(r[1] + alpha[1]*rint[1]) + C[1]*rint2[1] + rint3[1];
 
 	//to see errors in degree form
-	e[0] = e[0] * 180 / pi;
-	e[1] = e[1] * 180 / pi;
+	e[0] = e[0] * Rad2Deg;
+	e[1] = e[1] * Rad2Deg;
 
-	ed[0] = ed[0] * 180 / pi;
-	ed[1] = ed[1] * 180 / pi;
+	ed[0] = ed[0] * Rad2Deg;
+	ed[1] = ed[1] * Rad2Deg;
 
-	r[0] = r[0] * 180 / pi;
-	r[1] = r[1] * 180 / pi;
+	r[0] = r[0] * Rad2Deg;
+	r[1] = r[1] * Rad2Deg;
 
 	// for robot
 	tau[0] = tau[0] * 10.0 / 287.0;
