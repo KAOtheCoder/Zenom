@@ -61,6 +61,8 @@ private:
 	double ke[2];
 	double kr[2];
 	double t,t2,t3;
+	double dE[2];
+	double dR[2];
 
 	const double Deg2Rad = 0.017453292519943;
 	const double pi = 3.14159265359;
@@ -85,6 +87,7 @@ int TargetTest::initialize()
 	registerLogVariable(tau, "tau", 1, 2);
 	registerLogVariable(e, "e", 1, 2);
 	registerLogVariable(ed, "ed", 1, 2);
+	registerLogVariable(r, "r", 1, 2);
 
 	// ----- Register the control paramateres -----
 	registerControlVariable(q, "q", 1, 2);
@@ -103,20 +106,20 @@ int TargetTest::initialize()
 	freq[0] = 3;
 	freq[1] = 3;
 
-	alpha[0] = 1.2;
-	alpha[1] = 1.2;
+	alpha[0] = 10;
+	alpha[1] = 10;
 
-	Kr[0] = 20;
-	Kr[1] = 20;
+	Kr[0] = 35;
+	Kr[1] = 30;
 
-	Ke[0] = 250;
-	Ke[1] = 100;
+	Ke[0] = 35;
+	Ke[1] = 30;
 
-	Ks[0] = 25;
-	Ks[1] = 25;
+	Ks[0] = 150;
+	Ks[1] = 30;
 
-	C[0] = 300;
-	C[1] = 150;
+	C[0] = 100;
+	C[1] = 1000;
 
 	deltaE[0] = 10 * Deg2Rad;
 	deltaE[1] = 10 * Deg2Rad;
@@ -223,14 +226,20 @@ int TargetTest::doloop()
 	ed[0] = dd[0] - qd[0];
 	ed[1] = dd[1] - qd[1];
 
-	ke[0] = Ke[0] * deltaE[0]*deltaE[0] / (deltaE[0]*deltaE[0] - e[0]*e[0]);
-	ke[1] = Ke[1] * deltaE[1]*deltaE[1] / (deltaE[1]*deltaE[1] - e[1]*e[1]);
+	dE[0] = pow((deltaE[0]*Deg2Rad),2);
+	dE[1] = pow((deltaE[1]*Deg2Rad),2);
+
+	dR[0] = pow((deltaR[0]*Deg2Rad),2);
+	dR[1] = pow((deltaR[1]*Deg2Rad),2);
+
+	ke[0] = Ke[0] * dE[0] / (dE[0] - e[0]*e[0]);
+	ke[1] = Ke[1] * dE[1] / (dR[1] - e[1]*e[1]);
 
 	r[0] = ed[0]+ke[0]*e[0];
 	r[1] = ed[1]+ke[1]*e[1];
 
-	kr[0] = Kr[0] * deltaR[0]*deltaR[0] / (deltaR[0]*deltaR[0] - r[0]*r[0]);
-	kr[1] = Kr[1] * deltaR[1]*deltaR[1] / (deltaR[1]*deltaR[1] - r[1]*r[1]);
+	kr[0] = Kr[0] * dR[0] / (dR[0] - r[0]*r[0]);
+	kr[1] = Kr[1] * dR[1] / (dR[1] - r[1]*r[1]);
 
 	// integrate r
 	rint[0] = mrInt[0].integrate(r[0]);
@@ -252,6 +261,9 @@ int TargetTest::doloop()
 
 	ed[0] = ed[0] * 180 / pi;
 	ed[1] = ed[1] * 180 / pi;
+
+	r[0] = r[0] * 180 / pi;
+	r[1] = r[1] * 180 / pi;
 
 	// for robot
 	tau[0] = tau[0] * 10.0 / 287.0;
