@@ -50,5 +50,5 @@ cd zenom/examples
 make
 
 #add ld library path to bashrc
-echo 'export LD_LIBRARY_PATH=/usr/local/qwt-6.0.1-svn/lib/:/usr/local/lib64:/usr/local/osg/lib' >> ~/.bashrc
+echo 'export LD_LIBRARY_PATH=/usr/local/qwt-6.0.3-svn/lib/:/usr/local/lib64:/usr/local/osg/lib' >> ~/.bashrc
 

@@ -40,7 +40,7 @@ Zenom::Zenom(int argc, char *argv[]) :
     mSceneManager = new SceneManager(this);
     mCameraManager = new CameraScene(this);
     mRobotModeDialog = new RobotModeDialog(this);
-    mTargetUI = new TargetUI(this);
+    //mTargetUI = new TargetUI(this);
 
     connect( mSceneManager, SIGNAL(warningMessage(const QString&)), ui->output,
              SLOT(appendWarningMessage(const QString&)) );
@@ -84,7 +84,7 @@ Zenom::~Zenom()
     delete mAboutDialog;
     delete mCameraManager;
     delete mRobotModeDialog;
-    delete mTargetUI;
+    //delete mTargetUI;
     delete mSceneManager;
     delete mPlotManager;
     delete mGaugeManager;
@@ -105,7 +105,7 @@ void Zenom::on_startButton_clicked()
         mDataRepository->deleteLogVariablesHeap();
         mDataRepository->createLogVariablesHeap();
         mDataRepository->sendStateRequest( R_START );
-        mTargetUI->sendStateRequest( R_START );
+        //mTargetUI->sendStateRequest( R_START );
 
 
     }
@@ -113,7 +113,7 @@ void Zenom::on_startButton_clicked()
     {
         setSimulationState( PAUSED );
         mDataRepository->sendStateRequest( R_PAUSE );
-        mTargetUI->sendStateRequest( R_PAUSE );
+        //mTargetUI->sendStateRequest( R_PAUSE );
 
         ui->output->appendMessage( QString("Simulation paused.") );
     }
@@ -121,7 +121,7 @@ void Zenom::on_startButton_clicked()
     {
         setSimulationState( RUNNING );
         mDataRepository->sendStateRequest( R_RESUME );
-        mTargetUI->sendStateRequest( R_RESUME );
+        //mTargetUI->sendStateRequest( R_RESUME );
 
 
         ui->output->appendMessage( QString("Simulation resumed.") );
@@ -133,7 +133,7 @@ void Zenom::on_stopButton_clicked()
 {
     setSimulationState( STOPPED );
     mDataRepository->sendStateRequest( R_STOP );
-    mTargetUI->sendStateRequest( R_STOP );
+    //mTargetUI->sendStateRequest( R_STOP );
 
     ui->output->appendMessage( QString("Simulation stopped.") );
 }
@@ -189,7 +189,7 @@ void Zenom::doloop()
     mPlotManager->tick();
     mSceneManager->tick();
     mCameraManager->tick();
-    mTargetUI->tick();
+    //mTargetUI->tick();
 }
 
 State Zenom::simulationState()
@@ -300,7 +300,7 @@ void Zenom::openProject(const QString& pProjectPath)
             std::cerr << "Created shared memories" << std::endl;
 
             mDataRepository->sendStateRequest( R_INIT );
-            mTargetUI->sendStateRequest( R_INIT );
+            //mTargetUI->sendStateRequest( R_INIT );
 
             // Controlbase main control heap'e baglanmasi ve
             // control variable degerlerini main control heap'e yazmasi beklenir.
@@ -355,7 +355,7 @@ void Zenom::loadSettings(const QString &pProjectName)
     mGaugeManager->loadSettings( settings );            // gauges
     mPlotManager->loadSettings( settings );             // plots
     mSceneManager->loadSettings( settings );            // scenes
-    mTargetUI->loadSettings( settings );
+    //mTargetUI->loadSettings( settings );
     settings.endGroup();
 
     QApplication::restoreOverrideCursor();
@@ -377,7 +377,7 @@ void Zenom::on_actionSave_Project_triggered()
     mGaugeManager->saveSettings( settings );            // gauges
     mPlotManager->saveSettings( settings );             // plots
     mSceneManager->saveSettings( settings );            // scenes
-    mTargetUI->saveSettings( settings );
+    //mTargetUI->saveSettings( settings );
     settings.endGroup();
 
     QApplication::restoreOverrideCursor();
@@ -407,7 +407,7 @@ void Zenom::setFrequency(double pFrequency)
     if ( pFrequency > 0 )
     {
         mDataRepository->setFrequency( pFrequency );
-        mTargetUI->setFrequency(pFrequency);
+        //mTargetUI->setFrequency(pFrequency);
         ui->frequency->setText( QString::number(pFrequency) );
         mLogVariablesWidget->mainFrequencyChanged( pFrequency );
     }
@@ -457,7 +457,7 @@ void Zenom::terminateProject()
     if ( mControlBaseProcess.state() != QProcess::NotRunning )
     {
         mDataRepository->sendStateRequest( R_TERMINATE );
-        mTargetUI->sendStateRequest( R_TERMINATE );
+        //mTargetUI->sendStateRequest( R_TERMINATE );
 
         if ( !mControlBaseProcess.waitForFinished(5000) )    // Finish the process
         {
@@ -602,5 +602,5 @@ void Zenom::on_naoControlPanel_triggered()
 
 void Zenom::on_actionData_Aqusition_Board_triggered()
 {
-   mTargetUI->show();
+   //mTargetUI->show();
 }

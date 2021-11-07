@@ -1,4 +1,4 @@
-#ifndef BOARDWRAPPER_H
+#ifdef BOARDWRAPPER_H
 #define BOARDWRAPPER_H
 
 #include "board.h"

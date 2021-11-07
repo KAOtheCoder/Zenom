@@ -8,7 +8,8 @@
 
 int main(int argc, char *argv[])
 {
-    mlockall ( MCL_CURRENT | MCL_FUTURE );
+    //mlockall causes "cannot connect to X server :0" error
+    //mlockall ( MCL_CURRENT | MCL_FUTURE );
 
     QApplication a(argc, argv);
     a.setOrganizationName( "RobotLab" );

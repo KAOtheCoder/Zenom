@@ -26,7 +26,7 @@
 
 #include "camerascene.h"
 #include "robotmodedialog.h"
-#include "target/targetui.h"
+//#include "target/targetui.h"
 
 #include <fstream>
 
@@ -179,7 +179,7 @@ private:
     CameraScene *mCameraManager;
     // Nao Dialog
     RobotModeDialog *mRobotModeDialog;
-    TargetUI *mTargetUI;
+    //TargetUI *mTargetUI;
     /**
      * Arayuzde yer alan status bar aracıdır.
      */

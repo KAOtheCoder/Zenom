@@ -5,7 +5,7 @@
  *      Author: root
  */
 
-#ifndef TARGET_TASK_H_
+#ifdef TARGET_TASK_H_
 #define TARGET_TASK_H_
 
 #include <TaskXn.h>

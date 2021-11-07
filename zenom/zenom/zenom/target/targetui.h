@@ -1,4 +1,4 @@
-#ifndef DAQ_H
+#ifdef DAQ_H
 #define DAQ_H
 
 #include <QDialog>
