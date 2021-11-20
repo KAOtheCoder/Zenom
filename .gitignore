@@ -26,5 +26,5 @@ Makefile
 *.mod.c
 .tmp_versions
 *.qmake.stash
-*.pro.user.*
+*.pro.user*
 
