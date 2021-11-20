@@ -25,3 +25,6 @@ Makefile
 *.symvers
 *.mod.c
 .tmp_versions
+*.qmake.stash
+*.pro.user.*
+
