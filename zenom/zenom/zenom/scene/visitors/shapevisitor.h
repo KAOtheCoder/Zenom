@@ -1,4 +1,4 @@
-#ifndef ZSHAPEVISITOR_H
+#ifdef ZSHAPEVISITOR_H
 #define ZSHAPEVISITOR_H
 
 #include <osg/Shape>

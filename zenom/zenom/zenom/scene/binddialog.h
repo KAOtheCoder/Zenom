@@ -1,4 +1,4 @@
-#ifndef BINDDIALOG_H
+#ifdef BINDDIALOG_H
 #define BINDDIALOG_H
 
 #include <QDialog>

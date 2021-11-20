@@ -4,7 +4,7 @@
 #if QT_VERSION >= 0x050000
 #include <QtWidgets/QMainWindow>
 #else
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 #endif
 #include <QProcess>
 #include <QWaitCondition>
@@ -230,17 +230,17 @@ private:
     /**
      * Gadget pencerelerinin tutuldugu ve yonetildigi siniftir.
      */
-    GaugeManager* mGaugeManager;
+    //GaugeManager* mGaugeManager;
 
     /**
      * Plot pencerelerinin tutuldugu ve yonetildigi siniftir.
      */
-    PlotManager* mPlotManager;
+    //PlotManager* mPlotManager;
 
     /**
      * Scene pencerelerinin tutuldugu ve yonetildigi siniftir.
      */
-    SceneManager* mSceneManager;
+    //SceneManager* mSceneManager;
 
     /**
      * Control programini calistiran siniftir.

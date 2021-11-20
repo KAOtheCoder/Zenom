@@ -1,4 +1,4 @@
-#ifndef VIEWPOINT_H
+#ifdef VIEWPOINT_H
 #define VIEWPOINT_H
 
 

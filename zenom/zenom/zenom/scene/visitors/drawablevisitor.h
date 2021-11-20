@@ -1,4 +1,4 @@
-#ifndef DRAWABLEVISITOR_H
+#ifdef DRAWABLEVISITOR_H
 #define DRAWABLEVISITOR_H
 
 #include <osg/Geometry>

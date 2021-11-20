@@ -1,4 +1,4 @@
-#ifndef NODEDATA_H
+#ifdef NODEDATA_H
 #define NODEDATA_H
 
 #include <QTreeWidgetItem>

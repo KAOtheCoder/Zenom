@@ -1,4 +1,4 @@
-#ifndef PLOTMAGNIFIER_H
+#ifdef PLOTMAGNIFIER_H
 #define PLOTMAGNIFIER_H
 
 #include <qwt_plot_magnifier.h>

@@ -1,4 +1,4 @@
-#ifndef PLOTCURVE_H
+#ifdef PLOTCURVE_H
 #define PLOTCURVE_H
 
 #include <qwt_plot_curve.h>

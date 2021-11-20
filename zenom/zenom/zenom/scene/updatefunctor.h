@@ -1,4 +1,4 @@
-#ifndef UPDATEFUNCTOR_H
+#ifdef UPDATEFUNCTOR_H
 #define UPDATEFUNCTOR_H
 
 #include "logvariableinterface.h"

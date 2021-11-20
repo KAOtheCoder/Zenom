@@ -1,6 +1,7 @@
 #include "logvariableswidget.h"
 #include "ui_logvariableswidget.h"
 
+#include <QAction>
 
 LogVariablesWidget::LogVariablesWidget(QWidget *parent) :
     QWidget(parent, Qt::Window),

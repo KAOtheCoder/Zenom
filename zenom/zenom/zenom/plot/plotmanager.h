@@ -1,4 +1,4 @@
-#ifndef PLOTMANAGER_H
+#ifdef PLOTMANAGER_H
 #define PLOTMANAGER_H
 
 #include <QObject>

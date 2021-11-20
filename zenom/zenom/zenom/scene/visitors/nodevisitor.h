@@ -1,4 +1,4 @@
-#ifndef NODEVISITOR_H
+#ifdef NODEVISITOR_H
 #define NODEVISITOR_H
 
 #include <osg/NodeVisitor>

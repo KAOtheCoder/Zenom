@@ -75,7 +75,7 @@ void CameraScene::processFrameAndUpdateGUI()
         socket = new boost::asio::ip::tcp::socket(ios);
         socket->connect(endpoint);
     }
-   catch(boost::system::system_error e){
+    catch(boost::system::system_error& e){
 
         ui->ipAddress->clear();
         ui->ipAddress->setPlaceholderText("Wrong ip address , Please try again");
@@ -83,7 +83,7 @@ void CameraScene::processFrameAndUpdateGUI()
         finish=true;
         ui->start->setText("Start");
 
-   }
+    }
 
     boost::array<int,2>buff;
 

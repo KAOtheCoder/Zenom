@@ -46,7 +46,7 @@ void MatlabStream::writeLogVariable( LogVariable* pLogVariable, unsigned int pRo
         (*this) << pLogVariable->heapElement( i, pRow, pColumn ) << "; ";
     }
 
-    (*this) << QString("];") << endl;
+    (*this) << QString("];") << Qt::endl;
 }
 
 void MatlabStream::writeLogVariableItem( LogVariable* pLogVariable, unsigned int pRow, unsigned int pColumn )
@@ -74,7 +74,7 @@ void MatlabStream::writeLogVariableItem( LogVariable* pLogVariable, unsigned int
         (*this) << pLogVariable->heapElement( i, pRow, pColumn ) << "; ";
     }
 
-    (*this) << QString("];") << endl;
+    (*this) << QString("];") << Qt::endl;
 }
 
 void MatlabStream::writeLogVariableTime( LogVariable* pLogVariable )
@@ -91,5 +91,5 @@ void MatlabStream::writeLogVariableTime( LogVariable* pLogVariable )
         (*this) << pLogVariable->heapElement( i, pLogVariable->size() ) << "; ";
     }
 
-    (*this) << QString("];") << endl;
+    (*this) << QString("];") << Qt::endl;
 }

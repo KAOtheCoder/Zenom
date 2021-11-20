@@ -1,4 +1,4 @@
-#ifndef SCENEMANAGER_H
+#ifdef SCENEMANAGER_H
 #define SCENEMANAGER_H
 
 #include <QObject>

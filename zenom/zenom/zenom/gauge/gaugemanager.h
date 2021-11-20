@@ -1,4 +1,4 @@
-#ifndef GAUGEMANAGER_H
+#ifdef GAUGEMANAGER_H
 #define GAUGEMANAGER_H
 
 #include <QObject>

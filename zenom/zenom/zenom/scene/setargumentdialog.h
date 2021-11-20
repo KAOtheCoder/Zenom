@@ -1,4 +1,4 @@
-#ifndef SETARGUMENTDIALOG_H
+#ifdef SETARGUMENTDIALOG_H
 #define SETARGUMENTDIALOG_H
 
 #include <QDialog>

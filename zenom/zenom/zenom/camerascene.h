@@ -7,7 +7,7 @@
 #include <thread>
 #include <mutex>
 #include <fstream>
-#include<QIODevice>
+#include <QIODevice>
 #include <QCloseEvent>
 
 

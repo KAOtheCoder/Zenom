@@ -1,4 +1,4 @@
-#ifndef VIEWERWIDGET_H
+#ifdef VIEWERWIDGET_H
 #define VIEWERWIDGET_H
 
 #include <QWidget>

@@ -1,4 +1,4 @@
-#ifndef PLOT_H
+#ifdef PLOT_H
 #define PLOT_H
 
 

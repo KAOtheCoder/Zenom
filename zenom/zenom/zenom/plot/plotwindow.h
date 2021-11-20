@@ -1,4 +1,4 @@
-#ifndef PLOTWINDOW_H
+#ifdef PLOTWINDOW_H
 #define PLOTWINDOW_H
 
 #include <QMainWindow>

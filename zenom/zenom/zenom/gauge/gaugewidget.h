@@ -1,4 +1,4 @@
-#ifndef GAUGEWIDGET_H
+#ifdef GAUGEWIDGET_H
 #define GAUGEWIDGET_H
 
 #include <QWidget>

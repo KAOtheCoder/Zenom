@@ -1,4 +1,4 @@
-#ifndef TRANSFORMVISITOR_H
+#ifdef TRANSFORMVISITOR_H
 #define TRANSFORMVISITOR_H
 
 #include <osg/AutoTransform>

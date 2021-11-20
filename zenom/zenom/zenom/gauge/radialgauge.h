@@ -1,4 +1,4 @@
-#ifndef RADIALGAUGE_H
+#ifdef RADIALGAUGE_H
 #define RADIALGAUGE_H
 
 #include <qwt_dial.h>

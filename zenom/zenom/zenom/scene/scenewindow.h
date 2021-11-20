@@ -1,4 +1,4 @@
-#ifndef SCENEWINDOW_H
+#ifdef SCENEWINDOW_H
 #define SCENEWINDOW_H
 
 #include <QMainWindow>

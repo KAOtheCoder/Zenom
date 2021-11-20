@@ -1,4 +1,4 @@
-#ifndef BASEVISITOR_H
+#ifdef BASEVISITOR_H
 #define BASEVISITOR_H
 
 #include <QTreeWidgetItem>

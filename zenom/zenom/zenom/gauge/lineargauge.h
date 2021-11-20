@@ -1,4 +1,4 @@
-#ifndef LINEARGAUGE_H
+#ifdef LINEARGAUGE_H
 #define LINEARGAUGE_H
 
 #include "abstractgauge.h"

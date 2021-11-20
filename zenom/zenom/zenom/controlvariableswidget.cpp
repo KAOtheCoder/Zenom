@@ -3,6 +3,7 @@
 
 #include <QHeaderView>
 #include <QEvent>
+#include <QAction>
 
 ControlVariablesWidget::ControlVariablesWidget(QWidget *parent) :
     QWidget(parent, Qt::Window),

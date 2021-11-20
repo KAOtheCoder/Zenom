@@ -1,5 +1,5 @@
 #include <sys/mman.h>
-#include <QtGui/QApplication>
+#include <QApplication>
 #include "zenom.h"
 
 #if QT_VERSION < 0x050000
