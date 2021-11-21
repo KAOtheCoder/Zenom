@@ -116,7 +116,7 @@ void DataRepository::createLogVariablesHeap()
             mLogVariables[i]->createHeap();
         }
     }
-    catch( std::system_error e )
+    catch( std::system_error& e )
     {
         std::cout << std::string(e.what()) << std::endl;
 
@@ -132,7 +132,7 @@ void DataRepository::deleteLogVariablesHeap()
             mLogVariables[i]->deleteHeap();
         }
     }
-    catch( std::system_error e )
+    catch( std::system_error& e )
     {
         std::cout << std::string(e.what()) << std::endl;
 
@@ -164,7 +164,7 @@ void DataRepository::unbindLogVariableHeap()
             mLogVariables[i]->unbindHeap();
         }
     }
-    catch( std::system_error e )
+    catch( std::system_error& e )
     {
         std::cout << std::string(e.what()) << std::endl;
 

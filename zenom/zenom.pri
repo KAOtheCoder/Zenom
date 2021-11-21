@@ -26,8 +26,8 @@ ZENOM_INSTALL_BINS      = $${ZENOM_INSTALL_PREFIX}/bin
 #--------------------------------------------------------------
 # Qwt path
 #--------------------------------------------------------------
-QWT_HEADERS   = /usr/local/qwt-6.0.3-svn/include
-QWT_LIBS      = /usr/local/qwt-6.0.3-svn/lib
+QWT_HEADERS   = /usr/local/qwt-6.2.0/include
+QWT_LIBS      = /usr/local/qwt-6.2.0/lib
 
 #--------------------------------------------------------------
 # OpenSceneGraph path

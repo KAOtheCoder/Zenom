@@ -64,12 +64,12 @@ void LifeCycleTask::run()
             usleep(100*1000); //100ms 10hz
         }
     }
-    catch (std::system_error e)
+    catch (std::system_error& e)
     {
         std::cerr << "Error occurred controlBase:"<< e.code() <<
                      std::string(e.what()) << std::endl;
     }
-    catch (std::exception e)
+    catch (std::exception& e)
     {
         std::cerr << "Exception occured: " << e.what() << std::endl;
     }

@@ -1,4 +1,4 @@
-#ifdef PLOTMAGNIFIER_H
+#ifndef PLOTMAGNIFIER_H
 #define PLOTMAGNIFIER_H
 
 #include <qwt_plot_magnifier.h>
@@ -8,7 +8,7 @@ class PlotMagnifier : public QwtPlotMagnifier
 {
     Q_OBJECT
 public:
-    explicit PlotMagnifier(QwtPlotCanvas *pCanvas);
+    explicit PlotMagnifier(QWidget *pCanvas);
     
 signals:
     void zoomed();

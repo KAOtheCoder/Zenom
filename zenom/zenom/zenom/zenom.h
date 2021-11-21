@@ -1,11 +1,7 @@
 #ifndef ZENOM_H
 #define ZENOM_H
 
-#if QT_VERSION >= 0x050000
-#include <QtWidgets/QMainWindow>
-#else
 #include <QMainWindow>
-#endif
 #include <QProcess>
 #include <QWaitCondition>
 #include <QMutex>
@@ -235,7 +231,7 @@ private:
     /**
      * Plot pencerelerinin tutuldugu ve yonetildigi siniftir.
      */
-    //PlotManager* mPlotManager;
+    PlotManager* mPlotManager;
 
     /**
      * Scene pencerelerinin tutuldugu ve yonetildigi siniftir.
@@ -303,9 +299,6 @@ private:
 
     //control variables
     std::vector<ControlVariable*> cntrVariables;
-
-protected:
-
 };
 
 #endif // ZENOM_H

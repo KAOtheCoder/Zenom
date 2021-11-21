@@ -1,12 +1,12 @@
-//#include "plotmagnifier.h"
+#include "plotmagnifier.h"
 
-//PlotMagnifier::PlotMagnifier(QwtPlotCanvas *pCanvas) :
-//    QwtPlotMagnifier(pCanvas)
-//{
-//}
+PlotMagnifier::PlotMagnifier(QWidget *pCanvas) :
+    QwtPlotMagnifier(pCanvas)
+{
+}
 
-//void PlotMagnifier::rescale(double factor)
-//{
-//    emit zoomed();
-//    QwtPlotMagnifier::rescale(factor);
-//}
+void PlotMagnifier::rescale(double factor)
+{
+    emit zoomed();
+    QwtPlotMagnifier::rescale(factor);
+}

@@ -161,9 +161,9 @@ RESOURCES += \
 	zenom.qrc
 
 # Qwt
-#INCLUDEPATH +=  $${QWT_HEADERS}
-#DEPENDPATH += $${QWT_HEADERS}
-#LIBS += -L$${QWT_LIBS} -lqwt
+INCLUDEPATH +=  $${QWT_HEADERS}
+DEPENDPATH += $${QWT_HEADERS}
+LIBS += -L$${QWT_LIBS} -lqwt
 
 # Zenom Core Library
 INCLUDEPATH += ../znm-core

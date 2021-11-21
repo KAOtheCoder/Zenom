@@ -1,4 +1,4 @@
-#ifdef PLOTCURVE_H
+#ifndef PLOTCURVE_H
 #define PLOTCURVE_H
 
 #include <qwt_plot_curve.h>
@@ -16,7 +16,7 @@ public:
 
     virtual size_t size() const { return mLogVariableItem.isValid() ? mLogVariableItem.size() : 0; }
 
-    virtual QRectF boundingRect() const { return d_boundingRect; }
+    virtual QRectF boundingRect() const { return m_boundingRect; }
 
     void setLogVariableItem(const LogVariableItem &);
 
@@ -31,6 +31,7 @@ public:
 private:
      LogVariableItem mLogVariableItem;
      int mLastHeapSize;
+     QRectF m_boundingRect;
 };
 
 /*
