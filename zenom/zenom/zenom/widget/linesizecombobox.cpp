@@ -12,7 +12,7 @@ LineSizeComboBox::LineSizeComboBox(QWidget *parent) :
 
 void LineSizeComboBox::on_SelectedSizeChanged(int pIndex)
 {
-    emit sizeChanged(pIndex);
+    emit widthChanged(pIndex);
 }
 
 void LineSizeComboBox::fillComboBox()

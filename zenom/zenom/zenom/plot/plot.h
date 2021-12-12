@@ -1,7 +1,6 @@
 #ifndef PLOT_H
 #define PLOT_H
 
-
 #include <QString>
 #include <QSettings>
 #include <qwt_plot.h>
@@ -48,16 +47,12 @@ public:
      */
     void exportCurvesAsMatlab( const QString& pFileName );
 
+    void removeCurve(QwtPlotCurve* curve);
+
 signals:
     void autoscaleOff();
 
 protected slots:
-    void legendColorChanged( const QColor& pColor );
-
-    void legendSizeChanged( int );
-
-    void legendRemoveRequest();
-
     void zoommed_or_panned();
 
 private:

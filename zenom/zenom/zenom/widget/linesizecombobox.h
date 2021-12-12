@@ -12,7 +12,7 @@ public:
     void setSize(const int);
     
 signals:
-    void sizeChanged(int);
+    void widthChanged(int);
     
 public slots:
     void on_SelectedSizeChanged(int);

@@ -52,7 +52,8 @@ public:
 
     void loadSettings(QSettings &pSettings);
 
-    virtual QWidget* legendItem() const;
+    void setColor(const QColor& pColor);
+    void setWidth(const int pWidth);
 
 private:
     CurveData *mCurveData;

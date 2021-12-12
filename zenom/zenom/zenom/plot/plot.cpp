@@ -1,4 +1,7 @@
 #include "plot.h"
+#include "plotmagnifier.h"
+#include "utility/matlabstream.h"
+#include "legend.h"
 
 #include <QFile>
 #include <QFileInfo>
@@ -8,8 +11,6 @@
 #include <qwt_plot_marker.h>
 #include <qwt_plot_renderer.h>
 #include <qwt_text.h>
-#include "plotmagnifier.h"
-#include "utility/matlabstream.h"
 #include <datarepository.h>
 #include <QPen>
 
@@ -17,7 +18,8 @@ Plot::Plot(QWidget* pParent): QwtPlot(pParent)
 {
     setAxisTitle( QwtPlot::xBottom, "Time [s]" );
     setCanvasBackground( Qt::white );
-    insertLegend( new QwtLegend, QwtPlot::RightLegend );
+    updateLayout();
+    insertLegend( new Legend(), QwtPlot::RightLegend );
 
     // panning with the left mouse button
     QwtPlotPanner* plotPanner = new QwtPlotPanner( canvas() );
@@ -121,52 +123,10 @@ void Plot::tick()
     replot();
 }
 
-void Plot::legendColorChanged( const QColor& pColor )
-{
-    if ( legend() && sender()->isWidgetType() )
-    {
-        //PlotCurve* curve = (PlotCurve*) legend()->find( ( QWidget * )sender() );
-        PlotCurve* curve = static_cast<QwtLegend*>(legend())->itemInfo(static_cast<QWidget*>(sender())).value<PlotCurve*>();
-        QPen currentPen = curve->pen();
-        currentPen.setColor( pColor );
-        curve->setPen( currentPen );
-        replot();
-    }
-}
-
-void Plot::legendRemoveRequest()
-{
-    if ( legend() && sender()->isWidgetType() )
-    {
-        //PlotCurve* curve = (PlotCurve*) legend()->find( ( QWidget * )sender() );
-        PlotCurve* curve = static_cast<QwtLegend*>(legend())->itemInfo(static_cast<QWidget*>(sender())).value<PlotCurve*>();
-
-        for (int i = 0; i < mCurveVec.size(); ++i)
-        {
-            if ( mCurveVec[i] == curve )
-            {
-                mCurveVec.remove( i );
-                break;
-            }
-        }
-
-        delete curve;
-        replot();
-        updateLayout();
-    }
-}
-
-void Plot::legendSizeChanged(int pWidth)
-{
-    if ( legend() && sender()->isWidgetType() )
-    {
-        //PlotCurve* curve = (PlotCurve*) legend()->find( ( QWidget * )sender() );
-        PlotCurve* curve = static_cast<QwtLegend*>(legend())->itemInfo(static_cast<QWidget*>(sender())).value<PlotCurve*>();
-        QPen currentPen = curve->pen();
-        currentPen.setWidth(pWidth);
-        curve->setPen( currentPen );
-        replot();
-    }
+void Plot::removeCurve(QwtPlotCurve *pCurve) {
+    mCurveVec.removeOne(pCurve);
+    delete pCurve;
+    updateLayout();
 }
 
 double Plot::timeInterval()

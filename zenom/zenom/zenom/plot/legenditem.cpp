@@ -1,5 +1,4 @@
 #include "legenditem.h"
-#include "ui_legenditem.h"
 
 LegendItem::LegendItem(QWidget *parent) :
     QWidget(parent),
@@ -8,11 +7,11 @@ LegendItem::LegendItem(QWidget *parent) :
     ui->setupUi(this);
 
     connect( ui->removeButton, SIGNAL(clicked()),
-        SIGNAL(removeRequest()) );
+        SIGNAL(removeRequested()) );
     connect( ui->colorButton, SIGNAL(colorChanged(const QColor&)),
         SIGNAL(colorChanged(const QColor&)) );
-    connect( ui->lineSizeCombo, SIGNAL(sizeChanged(int)),
-             SIGNAL(sizeChanged(int)) );
+    connect( ui->lineSizeCombo, SIGNAL(widthChanged(int)),
+             SIGNAL(widthChanged(int)) );
 }
 
 LegendItem::~LegendItem()

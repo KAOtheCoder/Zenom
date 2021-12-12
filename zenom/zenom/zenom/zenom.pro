@@ -24,11 +24,13 @@ CONFIG += c++11
 CONFIG += serialport
 
 SOURCES += main.cpp\
+    plot/legend.cpp \
 	target/board.cpp \
 	target/boardwrapper.cpp \
 	target/daqboard1.cpp \
 	target/daqboard2.cpp \
 	target/targetui.cpp \
+    widget/unboundedscrollarea.cpp \
 		zenom.cpp \
 	messagelistenertask.cpp \
 	controlvariableswidget.cpp \
@@ -84,6 +86,7 @@ HEADERS  += zenom.h \
 	messagelistenertask.h \
 	controlvariableswidget.h \
 	logvariableswidget.h \
+	plot/legend.h \
 	target/board.h \
 	target/boardwrapper.h \
 	target/daqboard1.h \
@@ -134,7 +137,8 @@ HEADERS  += zenom.h \
 	camerascene.h \
 	robotmodedialog.h \
 	target/comboboxitemdelegate.h \
-	target/targettask.h
+	target/targettask.h \
+	widget/unboundedscrollarea.h
 
 FORMS    += zenom.ui \
 	controlvariableswidget.ui \

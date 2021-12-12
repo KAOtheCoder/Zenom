@@ -94,22 +94,14 @@ void PlotCurve::tick()
     mCurveData->updateBoundingRect();
 }
 
-QWidget* PlotCurve::legendItem() const
-{
-    LegendItem* legendItem = new LegendItem();
-    legendItem->setName( title().text() );
-    legendItem->setColor( pen().color() );
-    legendItem->setSize( pen().width() );
+void PlotCurve::setColor(const QColor &pColor) {
+    QPen currentPen = pen();
+    currentPen.setColor(pColor);
+    setPen(currentPen);
+}
 
-    // Do not delete object, during its event handler
-    QObject::connect( legendItem, SIGNAL( removeRequest() ),
-        (Plot*) plot(), SLOT( legendRemoveRequest() ), Qt::QueuedConnection );
-
-    QObject::connect( legendItem, SIGNAL( colorChanged(const QColor&) ),
-        (Plot*) plot(), SLOT( legendColorChanged(const QColor&) ) );
-
-    QObject::connect( legendItem, SIGNAL( sizeChanged(int) ),
-        (Plot*) plot(), SLOT( legendSizeChanged(int ) ) );
-
-    return legendItem;
+void PlotCurve::setWidth(const int pWidth) {
+    QPen currentPen = pen();
+    currentPen.setWidth(pWidth);
+    setPen(currentPen);
 }

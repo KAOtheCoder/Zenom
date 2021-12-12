@@ -2,6 +2,7 @@
 #define LEGENDITEM_H
 
 #include <QWidget>
+#include "ui_legenditem.h"
 
 namespace Ui {
 class LegendItem;
@@ -15,6 +16,7 @@ public:
     explicit LegendItem(QWidget *parent = 0);
     ~LegendItem();
 
+    QString name() const { return ui->curveName->text(); }
     void setName( const QString& pName );
 
     void setColor( const QColor& pColor );
@@ -23,8 +25,8 @@ public:
 
 signals:
     void colorChanged( const QColor& );
-    void removeRequest();
-    void sizeChanged( int );
+    void removeRequested();
+    void widthChanged( int );
     
 private:
     Ui::LegendItem *ui;
