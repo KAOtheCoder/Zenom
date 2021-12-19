@@ -1,4 +1,4 @@
-#ifdef DAQBOARD2_H
+#ifndef DAQBOARD2_H
 #define DAQBOARD2_H
 
 #include "board.h"

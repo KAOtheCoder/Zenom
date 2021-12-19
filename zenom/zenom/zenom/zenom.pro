@@ -10,8 +10,7 @@
 
 include( ../../zenom.pri )
 
-QT       += core gui opengl
-QT      += network
+QT += core gui opengl network serialport
 
 CONFIG += qwt
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -21,17 +20,16 @@ TEMPLATE = app
 
 QMAKE_CXXFLAGS += -std=c++11
 CONFIG += c++11
-CONFIG += serialport
 
 SOURCES += main.cpp\
-    plot/legend.cpp \
+        plot/legend.cpp \
 	target/board.cpp \
 	target/boardwrapper.cpp \
 	target/daqboard1.cpp \
 	target/daqboard2.cpp \
 	target/targetui.cpp \
-    widget/unboundedscrollarea.cpp \
-		zenom.cpp \
+        widget/unboundedscrollarea.cpp \
+        zenom.cpp \
 	messagelistenertask.cpp \
 	controlvariableswidget.cpp \
 	logvariableswidget.cpp \

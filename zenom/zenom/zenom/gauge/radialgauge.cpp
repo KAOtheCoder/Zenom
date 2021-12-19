@@ -36,7 +36,6 @@ void RadialGauge::setValue( double pValue )
 void RadialGauge::saveSettings( QSettings& pSettings )
 {
     // Scale
-    //pSettings.setValue("direction", direction());
     pSettings.setValue("minValue", lowerBound());
     pSettings.setValue("maxValue", upperBound());
     pSettings.setValue("origin", origin());
