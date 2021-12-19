@@ -9,9 +9,9 @@
 #include "zenom.h"
 
 MessageListenerTask::MessageListenerTask( Zenom* pZenom )
-    :  mZenom(pZenom),
-       initMsgs(0),
-       TaskXn("MessageListenerTask")
+    : TaskXn("MessageListenerTask"),
+      mZenom(pZenom),
+      initMsgs(0)
 {
 
 }

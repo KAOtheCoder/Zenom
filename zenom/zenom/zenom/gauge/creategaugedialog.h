@@ -1,4 +1,4 @@
-#ifdef CREATEGAUGEDIALOG_H
+#ifndef CREATEGAUGEDIALOG_H
 #define CREATEGAUGEDIALOG_H
 
 #include <QDialog>

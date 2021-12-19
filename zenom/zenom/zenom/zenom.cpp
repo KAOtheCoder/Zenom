@@ -35,7 +35,7 @@ Zenom::Zenom(int argc, char *argv[]) :
     mLogVariablesWidget = new LogVariablesWidget(this);
     ui->menu_View->addAction( mLogVariablesWidget->toggleViewAction() );
 
-    //mGaugeManager = new GaugeManager(this);
+    mGaugeManager = new GaugeManager(this);
     mPlotManager = new PlotManager(this);
     //mSceneManager = new SceneManager(this);
     mCameraManager = new CameraScene(this);
@@ -87,7 +87,7 @@ Zenom::~Zenom()
     //delete mTargetUI;
     //delete mSceneManager;
     delete mPlotManager;
-    //delete mGaugeManager;
+    delete mGaugeManager;
     delete mLogVariablesWidget;
     delete mControlVariablesWidget;
     delete mStatusBar;
@@ -140,7 +140,7 @@ void Zenom::on_stopButton_clicked()
 
 void Zenom::on_actionWatch_triggered()
 {
-    //mGaugeManager->showGaugeListDialog();
+    mGaugeManager->showGaugeListDialog();
 }
 
 void Zenom::on_actionPlot_triggered()
@@ -185,7 +185,7 @@ void Zenom::doloop()
 {
     mStatusBar->setElapsedTime( mDataRepository->elapsedTimeSecond() );
     mStatusBar->setOverruns( mDataRepository->overruns() );
-    //mGaugeManager->tick();
+    mGaugeManager->tick();
     mPlotManager->tick();
     //mSceneManager->tick();
     mCameraManager->tick();
@@ -314,7 +314,7 @@ void Zenom::openProject(const QString& pProjectPath)
 
             mControlVariablesWidget->setControlVariableList( mDataRepository->controlVariables() );
             mLogVariablesWidget->setLogVariableList( mDataRepository->logVariables() );
-            //mGaugeManager->setLogVariableList( mDataRepository->logVariables() );
+            mGaugeManager->setLogVariableList( mDataRepository->logVariables() );
 
             loadSettings( projectAbsolutePath );
 
@@ -352,7 +352,7 @@ void Zenom::loadSettings(const QString &pProjectName)
     restoreGeometry( settings.value("geometry").toByteArray() );
     mLogVariablesWidget->loadSettings( settings );      // log variable values
     mControlVariablesWidget->loadSettings( settings );	// control variable values
-    //mGaugeManager->loadSettings( settings );            // gauges
+    mGaugeManager->loadSettings( settings );            // gauges
     mPlotManager->loadSettings( settings );             // plots
     //mSceneManager->loadSettings( settings );            // scenes
     //mTargetUI->loadSettings( settings );
@@ -374,7 +374,7 @@ void Zenom::on_actionSave_Project_triggered()
     settings.setValue("geometry", saveGeometry());
     mLogVariablesWidget->saveSettings( settings );      // log variable values
     mControlVariablesWidget->saveSettings( settings );  // control variable values
-    //mGaugeManager->saveSettings( settings );            // gauges
+    mGaugeManager->saveSettings( settings );            // gauges
     mPlotManager->saveSettings( settings );             // plots
     //mSceneManager->saveSettings( settings );            // scenes
     //mTargetUI->saveSettings( settings );
@@ -487,7 +487,7 @@ void Zenom::terminateProject()
 
     mDataRepository->clear();
 
-    //mGaugeManager->clear();
+    mGaugeManager->clear();
     mPlotManager->clear();
     //mSceneManager->clear();
 

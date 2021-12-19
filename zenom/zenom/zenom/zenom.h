@@ -226,7 +226,7 @@ private:
     /**
      * Gadget pencerelerinin tutuldugu ve yonetildigi siniftir.
      */
-    //GaugeManager* mGaugeManager;
+    GaugeManager* mGaugeManager;
 
     /**
      * Plot pencerelerinin tutuldugu ve yonetildigi siniftir.

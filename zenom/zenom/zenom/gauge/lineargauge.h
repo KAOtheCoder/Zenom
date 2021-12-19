@@ -1,4 +1,4 @@
-#ifdef LINEARGAUGE_H
+#ifndef LINEARGAUGE_H
 #define LINEARGAUGE_H
 
 #include "abstractgauge.h"
@@ -16,16 +16,13 @@ public:
 
 	virtual GaugeType type();
 	
-	virtual void setValue( double pValue );
+    virtual void setValue(double pValue) { QwtThermo::setValue(pValue); }
 
 	virtual void saveSettings( QSettings& pSettings );
 
 	virtual void loadSettings( QSettings& pSettings );
 
 	virtual QWidget* asWidget();
-
-	void setOrientation(Qt::Orientation pOrientation, QwtThermo::ScalePos pPosition );
-	Qt::Orientation orientation();
 
 	// Color
 	void setTextColor( const QColor& pColor );
@@ -35,9 +32,6 @@ public:
 
 	// Why protected ?
 	QwtScaleDraw *scaleDraw();
-
-private:
-	Qt::Orientation mOrientation;
 };
 
 #endif // LINEARGAUGE_H

@@ -1,4 +1,4 @@
-#ifdef RADIALGAUGE_H
+#ifndef RADIALGAUGE_H
 #define RADIALGAUGE_H
 
 #include <qwt_dial.h>
@@ -35,11 +35,6 @@ public:
 	virtual void loadSettings( QSettings& pSettings );
 
 	virtual QWidget* asWidget();
-
-	// Ticks
-	virtual void setScale( int maxMajIntv, int maxMinIntv, double step = 0.0 );
-	int scaleMaxMajor();
-	int scaleMaxMinor();
 	
 	// Needle
 	void setNeedle( NeedleType pNeedleType, NeedleStyle pNeedleStyle, QColor c1, QColor c2 );
@@ -55,10 +50,6 @@ public:
 	QColor backgroundColor();
 
 private:
-	// Ticks
-	int mScaleMaxMajor;
-	int mScaleMaxMinor;
-
 	// Needle
 	NeedleType mNeedleType;
 	NeedleStyle mNeedleStyle;

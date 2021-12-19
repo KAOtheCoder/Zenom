@@ -148,7 +148,7 @@ void DataRepository::bindLogVariablesHeap()
             mLogVariables[i]->bindHeap();
         }
     }
-    catch( std::system_error e )
+    catch( std::system_error& e )
     {
         std::cout << std::string(e.what()) << std::endl;
 
