@@ -1,12 +1,10 @@
 #include "comboboxitemdelegate.h"
 #include <QComboBox>
 
-ComboBoxItemDelegate::ComboBoxItemDelegate(QStringList list, QObject *parent)
-    :  mList(list),
-      QStyledItemDelegate(parent)
-{
-}
-
+ComboBoxItemDelegate::ComboBoxItemDelegate(const QStringList& pList, QObject *parent)
+    : QStyledItemDelegate(parent),
+      mList(pList)
+{}
 
 ComboBoxItemDelegate::~ComboBoxItemDelegate()
 {
@@ -15,12 +13,14 @@ ComboBoxItemDelegate::~ComboBoxItemDelegate()
 
 QWidget *ComboBoxItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(option);
+    Q_UNUSED(index);
+
     // Create the combobox and populate it
     QComboBox *cb = new QComboBox(parent);
-    const int row = index.row();
-    for(int i=0;i<mList.size();i++){
-        cb->addItem(mList.at(i));
-    }
+    for(const auto& listItem : mList)
+        cb->addItem(listItem);
+
     return cb;
 }
 

@@ -20,3 +20,6 @@ SOURCES += main.cpp
 INCLUDEPATH += ../../zenom/znm-math
 DEPENDPATH += ../../zenom/znm-math
 LIBS += -L../../lib -lznm-math
+
+DISTFILES += \
+    BouncingBall.qml

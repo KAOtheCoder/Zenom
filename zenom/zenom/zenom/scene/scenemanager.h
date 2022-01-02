@@ -1,37 +1,39 @@
-#ifdef SCENEMANAGER_H
+#ifndef SCENEMANAGER_H
 #define SCENEMANAGER_H
 
 #include <QObject>
-#include "scenewindow.h"
+#include <QSettings>
+
+#include "scenemainwindow.h"
 
 class SceneManager : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	SceneManager(QWidget *pParent);
+    SceneManager(QObject *pParent);
 
     ~SceneManager();
 	
-	void saveSettings( QSettings& pSettings );
+    void saveSettings( QSettings& pSettings );
 
-	void loadSettings( QSettings& pSettings );
+    void loadSettings( QSettings& pSettings );
 
-	void tick();
+    void tick();
 
-	void clear();
+    void clear();
 
 public slots:
-    SceneWindow* createScene();
+    SceneMainWindow* createScene();
 
 signals:
     void warningMessage( const QString& pText );
 
 private slots:
-    void sceneWindowDestroyed( SceneWindow* pSceneWindow );
+    void sceneWindowDestroyed( SceneMainWindow* pSceneMainWindow );
 
 private:
-    QVector<SceneWindow*> mSceneList;
+    QVector<SceneMainWindow*> mSceneList;
 };
 
 #endif // SCENEMANAGER_H

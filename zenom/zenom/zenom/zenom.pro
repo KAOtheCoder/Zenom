@@ -10,7 +10,7 @@
 
 include( ../../zenom.pri )
 
-QT += core gui opengl network serialport
+QT += core gui opengl network serialport quick
 
 CONFIG += qwt
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -49,20 +49,16 @@ SOURCES += main.cpp\
 	gauge/creategaugedialog.cpp \
 	gauge/abstractgauge.cpp \
 	gauge/editgaugedialog.cpp \
-	scene/scenemanager.cpp \
-	scene/scenewindow.cpp \
-	scene/viewerwidget.cpp \
-	scene/viewpoint.cpp \
-	scene/binddialog.cpp \
-	scene/setargumentdialog.cpp \
-	scene/logvariableinterface.cpp \
-	scene/updatefunctor.cpp \
-	scene/nodedata.cpp \
-	scene/visitors/transformvisitor.cpp \
-	scene/visitors/shapevisitor.cpp \
-	scene/visitors/nodevisitor.cpp \
-	scene/visitors/drawablevisitor.cpp \
-	scene/visitors/basevisitor.cpp \
+        scene/hierarchywidget.cpp \
+        scene/inspectorpage.cpp \
+        scene/inspectorwidget.cpp \
+        scene/logvariableconverter.cpp \
+        scene/objecthierarchytreewidgetitem.cpp \
+        scene/propertyinspectoritem.cpp \
+        scene/propertytracker.cpp \
+        scene/scenemanager.cpp \
+        scene/scenemainwindow.cpp \
+        scene/binddialog.cpp \
 	plot/plotmanager.cpp \
 	plot/plotwindow.cpp \
 	plot/attachlogvariabledialog.cpp \
@@ -106,20 +102,16 @@ HEADERS  += zenom.h \
 	gauge/creategaugedialog.h \
 	gauge/abstractgauge.h \
 	gauge/editgaugedialog.h \
-	scene/scenemanager.h \
-	scene/scenewindow.h \
-	scene/viewerwidget.h \
-	scene/viewpoint.h \
-	scene/binddialog.h \
-	scene/setargumentdialog.h \
-	scene/logvariableinterface.h \
-	scene/updatefunctor.h \
-	scene/nodedata.h \
-	scene/visitors/transformvisitor.h \
-	scene/visitors/shapevisitor.h \
-	scene/visitors/nodevisitor.h \
-	scene/visitors/drawablevisitor.h \
-	scene/visitors/basevisitor.h \
+        scene/hierarchywidget.h \
+        scene/inspectorpage.h \
+        scene/inspectorwidget.h \
+        scene/logvariableconverter.h \
+        scene/objecthierarchytreewidgetitem.h \
+        scene/propertyinspectoritem.h \
+        scene/propertytracker.h \
+        scene/scenemanager.h \
+        scene/scenemainwindow.h \
+        scene/binddialog.h \
 	plot/plotmanager.h \
 	plot/plotwindow.h \
 	plot/attachlogvariabledialog.h \
@@ -148,10 +140,7 @@ FORMS    += zenom.ui \
 	gauge/lineargaugesettingwidget.ui \
 	gauge/gaugewidget.ui \
 	gauge/creategaugedialog.ui \
-	gauge/editgaugedialog.ui \
-	scene/binddialog.ui \
-	scene/setargumentdialog.ui \
-	scene/scenewindow.ui \
+        gauge/editgaugedialog.ui \
 	plot/plotwindow.ui \
 	plot/attachlogvariabledialog.ui \
 	plot/legenditem.ui \

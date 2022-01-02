@@ -55,7 +55,7 @@ int BouncingBall::initialize()
     cor = -0.8;  // coefficient of restitution
 
     position[0] = 0;
-    position[1] = 0;
+    position[2] = 0;
 
     return 0;
 }
@@ -99,16 +99,16 @@ int BouncingBall::doloop()
     double ballRadius = 1;
 
     velocity = mVelocityIntegrator.integrate( g );
-    position[2] = mPositionIntegrator.integrate( velocity );   // position of ball
+    position[1] = mPositionIntegrator.integrate( velocity );   // position of ball
 
     // saturation
-    if ( position[2] <= ballRadius )
+    if ( position[1] <= ballRadius )
     {
-        position[2] = ballRadius;
+        position[1] = ballRadius;
     }
 
     // Hits the floor
-    if ( position[2] == ballRadius )
+    if ( position[1] == ballRadius )
     {
         mVelocityIntegrator.reset( velocity * cor );
         mPositionIntegrator.reset( ballRadius );

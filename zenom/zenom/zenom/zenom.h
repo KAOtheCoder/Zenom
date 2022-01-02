@@ -236,7 +236,7 @@ private:
     /**
      * Scene pencerelerinin tutuldugu ve yonetildigi siniftir.
      */
-    //SceneManager* mSceneManager;
+    SceneManager* mSceneManager;
 
     /**
      * Control programini calistiran siniftir.

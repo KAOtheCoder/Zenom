@@ -72,7 +72,10 @@ double DaqBoard1::getInput(int id)
         QReadLocker locker(&enc_lock);
         return (double)(enc.enc2)*1.0*pi/4096;
     }
+
+    return 0;
 }
+
 void DaqBoard1::setOutput(int id, double value)
 {
     if(value > 10) value = 10;

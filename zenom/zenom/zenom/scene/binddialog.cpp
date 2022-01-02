@@ -1,145 +1,104 @@
-//#include "binddialog.h"
-//#include "ui_binddialog.h"
+#include "binddialog.h"
+#include "logvariableconverter.h"
 
-//#include "visitors/nodevisitor.h"
+#include <QVBoxLayout>
+#include <QScrollArea>
 
-//BindDialog::BindDialog(QWidget *parent) :
-//    QDialog(parent),
-//    ui(new Ui::BindDialog)
-//{
-//    ui->setupUi(this);
+BindDialog::BindDialog(const LogVariableList& pLogVariables, QWidget* pParent)
+    : QDialog(pParent),
+      mLogVariables(pLogVariables),
+      mPropertyTracker(NULL),
+      mTypeLabel(new QLabel()),
+      mNameLabel(new QLabel()),
+      mLogVariablesButtonGroup(new QButtonGroup(this)),
+      mBindButton(new QPushButton(tr("Bind")))
+{
+    setWindowTitle(tr("Bind"));
 
-//    // Set argument dialog
-//    mSetArgumentDialog = new SetArgumentDialog(this);
-//    connect(mSetArgumentDialog, SIGNAL(binded(NodeData*, const QVector<LogVariable*>)), SLOT(bindedSlot(NodeData*, const QVector<LogVariable*>)) );
-//    connect(mSetArgumentDialog, SIGNAL(unbinded(NodeData*)), SLOT(unbindedSlot(NodeData*)) );
-//}
+    auto mainLayout = new QVBoxLayout();
+    setLayout(mainLayout);
 
-//BindDialog::~BindDialog()
-//{
-//    delete ui;
-//}
+    auto propertyLayout = new QHBoxLayout();
 
-//void BindDialog::setSceneData(osg::ref_ptr<osg::Node> pModel)
-//{
-//    NodeVisitor visitor( ui->nodeTree->invisibleRootItem() );
-//    pModel->accept(visitor);
-//    ui->nodeTree->expandAll();
-//}
+    auto typePalette = mTypeLabel->palette();
+    typePalette.setColor(mTypeLabel->foregroundRole(), QColor(Qt::darkYellow));
+    mTypeLabel->setPalette(typePalette);
 
-//void BindDialog::setLogVariableList(const LogVariableList &pLogVariableList)
-//{
-//    mSetArgumentDialog->setLogVariableList(pLogVariableList);
-//}
+    auto namePalette = mNameLabel->palette();
+    namePalette.setColor(mNameLabel->foregroundRole(), QColor(Qt::darkRed));
+    mNameLabel->setPalette(namePalette);
 
-//void BindDialog::saveSettings( QSettings& pSettings )
-//{
-//    pSettings.setValue("size", mBindedElements.size());
-//    int count = 0;
-//    foreach (NodeData* pFunctor, mBindedElements)
-//    {
-//        pSettings.beginGroup( QString("SceneBindedElement") + QString::number(count) );
-//        QString functorPath = childToRoot(pFunctor);
-//        pSettings.setValue("functorPath", functorPath);
-//        for ( int i = 0; i < pFunctor->updateFunctor()->arity(); ++i )
-//        {
-//            Argument arg = pFunctor->updateFunctor()->argument(i);
-//            pSettings.setValue( QString("Arg") + QString::number(i), arg.mVariant.logVariable()->name().c_str() );
-//        }
-//        pSettings.endGroup();
-//        ++count;
-//    }
-//}
+    propertyLayout->addWidget(mTypeLabel);
+    propertyLayout->addWidget(mNameLabel);
+    propertyLayout->addStretch();
+    mainLayout->addLayout(propertyLayout);
 
-//void BindDialog::loadSettings( QSettings& pSettings )
-//{
-//    int size = pSettings.value("size", 0).toInt();
-//    for ( int i = 0; i < size; ++i )
-//    {
-//        pSettings.beginGroup( QString("SceneBindedElement") + QString::number(i) );
+    auto logVariablesWidget = new QWidget();
+    auto logVariablesLayout = new QVBoxLayout();
+    logVariablesWidget->setLayout(logVariablesLayout);
 
-//        QString functorPath = pSettings.value("functorPath").toString();
-//        NodeData* functor = dynamic_cast<NodeData*>( rootToChild( functorPath ) );
-//        if ( functor )
-//        {
-//            QVector<LogVariable*> arguments;
-//            for ( int j = 0; j < functor->updateFunctor()->arity(); ++j )
-//            {
-//                QString logVariableName = pSettings.value(QString("Arg") + QString::number(j), "").toString();
-//                LogVariable* logVariable = DataRepository::instance()->findLogVariable( logVariableName.toStdString() );
-//                if ( logVariable )
-//                    arguments.push_back( logVariable );
-//            }
+    auto scrollArea = new QScrollArea();
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setBackgroundRole(QPalette::Light);
+    scrollArea->setWidget(logVariablesWidget);
+    mainLayout->addWidget(scrollArea);
 
-//            bindedSlot(functor, arguments);
-//        }
-//        else
-//        {
-//            //std::cout << "could not find osg node" << std::endl;
-//        }
+    const int LOG_VARIABLES_SIZE = pLogVariables.size();
 
-//        pSettings.endGroup();
-//    }
-//}
+    for (int i = 0; i < LOG_VARIABLES_SIZE; ++i)
+    {
+        auto logVariableRadioButton = new QRadioButton(QString::fromStdString(pLogVariables[i]->name()));
+        logVariablesLayout->addWidget(logVariableRadioButton);
+        mLogVariablesButtonGroup->addButton(logVariableRadioButton, i);
+    }
 
-//void BindDialog::clear()
-//{
-//    ui->nodeTree->clear();
-//    mBindedElements.clear();
-//}
+    auto buttonsLayout = new QHBoxLayout();
+    buttonsLayout->addStretch();
+    mBindButton->setEnabled(false);
+    buttonsLayout->addWidget(mBindButton);
+    auto unbindButton = new QPushButton(tr("Unbind"));
+    buttonsLayout->addWidget(unbindButton);
+    mainLayout->addLayout(buttonsLayout);
 
-//void BindDialog::on_closeButton_clicked()
-//{
-//    hide();
-//}
+    connect(mBindButton, SIGNAL(clicked()), this, SLOT(bind()));
+    connect(unbindButton, SIGNAL(clicked()), this, SLOT(unbind()));
+    connect(mLogVariablesButtonGroup, &QButtonGroup::buttonToggled, this, &BindDialog::updateBindButtonEnabled);
+}
 
-//void BindDialog::on_nodeTree_itemDoubleClicked( QTreeWidgetItem * pNodeItem, int )
-//{
-//    NodeData* nodeData = dynamic_cast<NodeData*>(pNodeItem);
-//    if ( nodeData )
-//    {
-//        mSetArgumentDialog->setNodeData( nodeData );
-//        mSetArgumentDialog->show();
-//    }
-//}
+void BindDialog::openDialog(PropertyTracker* pPropertyTracker)
+{
+    mPropertyTracker = pPropertyTracker;
 
-//void BindDialog::bindedSlot( NodeData* pNodeData, const QVector<LogVariable *> pArguments )
-//{
-//    if( pNodeData->bind( pArguments ) )
-//    {
-//        mBindedElements.insert(pNodeData);
-//    }
-//}
+    const auto& property = pPropertyTracker->property();
 
-//void BindDialog::unbindedSlot( NodeData* pNodeData )
-//{
-//    pNodeData->unbind();
-//    mBindedElements.remove(pNodeData);
-//}
+    mTypeLabel->setText(property.typeName());
+    mNameLabel->setText(property.name());
 
-//QString BindDialog::childToRoot( QTreeWidgetItem* pChildNode )
-//{
-//    if ( pChildNode->parent() == NULL )
-//        return QString::number( ui->nodeTree->indexOfTopLevelItem(pChildNode) );
+    const int logVariablesSize = mLogVariables.size();
 
+    for (int i = 0; i < logVariablesSize; ++i)
+        mLogVariablesButtonGroup->button(i)->setEnabled(pPropertyTracker->canBind(mLogVariables[i]));
 
-//    int index = pChildNode->parent()->indexOfChild( pChildNode );
-//    return childToRoot( pChildNode->parent() ) + "/" + QString::number( index );
-//}
+    updateBindButtonEnabled();
 
-//QTreeWidgetItem* BindDialog::rootToChild( const QString& pChildPath )
-//{
-//    QStringList path = pChildPath.split("/", QString::SkipEmptyParts);
-//    QTreeWidgetItem* item = ui->nodeTree->invisibleRootItem();
-//    for (int i = 0; i < path.size(); ++i)
-//    {
-//        int index = path[i].toInt();
-//        if ( item == NULL || item->childCount() < index )
-//            return NULL;
-//        else
-//            item = item->child( index );
-//    }
+    open();
+}
 
-//    return item;
-//}
+void BindDialog::bind()
+{
+    close();
+    emit bindTriggered(mPropertyTracker, mLogVariables[mLogVariablesButtonGroup->checkedId()]);
+}
 
+void BindDialog::unbind()
+{
+    close();
+    emit unbindTriggered(mPropertyTracker);
+}
+
+void BindDialog::updateBindButtonEnabled()
+{
+    const int checkedId = mLogVariablesButtonGroup->checkedId();
+
+    mBindButton->setEnabled(checkedId != -1 && mLogVariablesButtonGroup->button(checkedId)->isEnabled());
+}
