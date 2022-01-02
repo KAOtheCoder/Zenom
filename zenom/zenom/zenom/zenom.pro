@@ -10,10 +10,9 @@
 
 include( ../../zenom.pri )
 
-QT += core gui opengl network serialport quick
+QT += core gui opengl network serialport quick widgets
 
 CONFIG += qwt
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = zenom
 TEMPLATE = app
@@ -165,11 +164,6 @@ LIBS += -L../../lib -lznm-core -lboost_system
 INCLUDEPATH += ../znm-tools
 DEPENDPATH += ../znm-tools
 LIBS += -L../../lib -lznm-tools
-
-# OpenSceneGraph
-#INCLUDEPATH +=  $${OSG_HEADERS}
-#DEPENDPATH += $${OSG_HEADERS}
-#LIBS += -L$${OSG_LIBS} -losg -losgViewer -losgUtil -losgText -losgWidget -losgDB -losgGA -losgQt -losgSim -lOpenThreads
 
 # build directory
 DESTDIR = ../../bin
