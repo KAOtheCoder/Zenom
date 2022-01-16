@@ -1,15 +1,9 @@
 #include "propertytracker.h"
 
-bool PropertyTracker::isPropertySupported(const QMetaProperty &property)
-{
-    return !property.isEnumType() && QMetaType::canConvert(QMetaType::fromType<LogVariableConverter>(), QMetaType(property.typeId()));
-}
-
 PropertyTracker::PropertyTracker(QObject* pObject, const QMetaProperty& pProperty)
     : mObject(pObject),
       mProperty(pProperty)
-{
-}
+{}
 
 bool PropertyTracker::canBind(LogVariable *pLogVariable) const
 {

@@ -8,8 +8,6 @@
 class PropertyTracker
 {
 public:
-    static bool isPropertySupported(const QMetaProperty& property);
-
     PropertyTracker(QObject* pObject, const QMetaProperty& pProperty);
 
     inline QMetaProperty property() const { return mProperty; }

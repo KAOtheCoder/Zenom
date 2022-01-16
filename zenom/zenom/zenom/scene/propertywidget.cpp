@@ -23,9 +23,6 @@ PropertyWidget* PropertyWidget::create(QObject* pObject, const QMetaProperty& pP
     case QMetaType::LongLong: return new NumericPropertyWidget<long long>(pObject, pProperty, pParent);
     case QMetaType::ULong: return new NumericPropertyWidget<unsigned long>(pObject, pProperty, pParent);
     case QMetaType::ULongLong: return new NumericPropertyWidget<unsigned long long>(pObject, pProperty, pParent);
-    case QMetaType::QChar:
-    case QMetaType::Char:
-        return new PrimitivePropertyWidget(pObject, pProperty, pParent);
     case QMetaType::QSize:
     case QMetaType::QSizeF:
         return new SizePropertyWidget(pObject, pProperty, pParent);
@@ -102,23 +99,6 @@ PropertyWidget::PropertyWidget(QObject* pObject, const QMetaProperty& pProperty,
     setLayout(mainLayout);
 
     connect(bindButton, &QPushButton::clicked, this, [&](){ emit bindDialogRequested(&mPropertyTracker);});
-}
-
-PrimitivePropertyWidget::PrimitivePropertyWidget(QObject* pObject, const QMetaProperty& pProperty, QWidget* pParent)
-    : PropertyWidget(pObject, pProperty, pParent),
-      mLineEdit(new QLineEdit())
-{
-    if (pProperty.typeId() == QMetaType::QChar || pProperty.typeId() == QMetaType::Char)
-        mLineEdit->setMaxLength(1);
-
-    layout()->addWidget(mLineEdit);
-
-    connect(mLineEdit, &QLineEdit::editingFinished, this, [&]() { mPropertyTracker.setValue(mLineEdit->text()); });
-}
-
-void PrimitivePropertyWidget::updateValue() {
-    if (!mLineEdit->hasFocus())
-        mLineEdit->setText(mPropertyTracker.value().toString());
 }
 
 GridPropertyWidget::GridPropertyWidget(QObject* pObject,

@@ -30,18 +30,6 @@ private:
     static QString typeName(const int pTypeId);
 };
 
-class PrimitivePropertyWidget : public PropertyWidget {
-    Q_OBJECT
-
-public:
-    PrimitivePropertyWidget(QObject* pObject, const QMetaProperty& pProperty, QWidget* pParent = nullptr);
-
-    void updateValue() override;
-
-private:
-    QLineEdit* mLineEdit;
-};
-
 template <typename T>
 class NumericPropertyWidget: public PropertyWidget {
 public:
