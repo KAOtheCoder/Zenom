@@ -41,13 +41,3 @@ void PropertyTracker::update()
 {
     mObject->setProperty(mProperty.name(), QVariant::fromValue(mLogVariableConverter));
 }
-
-QString PropertyTracker::valueAsString() const
-{
-    return mObject->property(mProperty.name()).toString();
-}
-
-void PropertyTracker::setValueByString(const QString &pValue)
-{
-    mObject->setProperty(mProperty.name(), QVariant(pValue));
-}

@@ -7,6 +7,7 @@
 #include <QDoubleSpinBox>
 
 #include "propertytracker.h"
+#include "numericlineedit.h"
 
 class PropertyWidget : public QWidget
 {
@@ -24,6 +25,9 @@ signals:
 
 protected:
     PropertyTracker mPropertyTracker;
+
+private:
+    static QString typeName(const int pTypeId);
 };
 
 class PrimitivePropertyWidget : public PropertyWidget {
@@ -38,28 +42,25 @@ private:
     QLineEdit* mLineEdit;
 };
 
-class IntPropertyWidget : public PropertyWidget {
-    Q_OBJECT
-
+template <typename T>
+class NumericPropertyWidget: public PropertyWidget {
 public:
-    IntPropertyWidget(QObject* pObject, const QMetaProperty& pProperty, QWidget* pParent = nullptr);
+    NumericPropertyWidget(QObject* pObject, const QMetaProperty& pProperty, QWidget* pParent = nullptr)
+        : PropertyWidget(pObject, pProperty, pParent),
+          mLineEdit(new NumericLineEdit<T>())
+    {
+        layout()->addWidget(mLineEdit);
 
-    void updateValue() override;
+        connect(mLineEdit, &QLineEdit::editingFinished, this, [&]() { mPropertyTracker.setValue(mLineEdit->text()); });
+    }
+
+    void updateValue() override {
+        if (!mLineEdit->hasFocus())
+            mLineEdit->setText(mPropertyTracker.value().toString());
+    }
 
 private:
-    QSpinBox* mSpinBox;
-};
-
-class DoublePropertyWidget : public PropertyWidget {
-    Q_OBJECT
-
-public:
-    DoublePropertyWidget(QObject* pObject, const QMetaProperty& pProperty, QWidget* pParent = nullptr);
-
-    void updateValue() override;
-
-private:
-    QDoubleSpinBox* mSpinBox;
+    NumericLineEdit<T>* mLineEdit;
 };
 
 class GridPropertyWidget : public PropertyWidget {
@@ -71,8 +72,8 @@ public:
                        const QList<QList<QString>>& pLabels,
                        QWidget* pParent = nullptr);
 
-    QDoubleSpinBox* spinBox(const int pRow, const int pColumn) const {
-        return static_cast<QDoubleSpinBox*>(mGridLayout->itemAtPosition(pRow, (pColumn * 2) + 1)->widget());
+    NumericLineEdit<float>* lineEdit(const int pRow, const int pColumn) const {
+        return static_cast<NumericLineEdit<float>*>(mGridLayout->itemAtPosition(pRow, (pColumn * 2) + 1)->widget());
     }
 
 protected:
@@ -94,8 +95,8 @@ public:
 
 protected:
     void onEditingFinished() override {
-        mPropertyTracker.setValue(QSizeF(spinBox(0, 0)->value(),
-                                         spinBox(0, 1)->value()));
+        mPropertyTracker.setValue(QSizeF(lineEdit(0, 0)->value(),
+                                         lineEdit(0, 1)->value()));
     }
 };
 
@@ -111,8 +112,8 @@ public:
 
 protected:
     void onEditingFinished() override {
-        mPropertyTracker.setValue(QPointF(spinBox(0, 0)->value(),
-                                          spinBox(0, 1)->value()));
+        mPropertyTracker.setValue(QPointF(lineEdit(0, 0)->value(),
+                                          lineEdit(0, 1)->value()));
     }
 };
 
@@ -128,10 +129,10 @@ public:
 
 protected:
     void onEditingFinished() override {
-        mPropertyTracker.setValue(QRectF(spinBox(0, 0)->value(),
-                                          spinBox(0, 1)->value(),
-                                          spinBox(1, 0)->value(),
-                                          spinBox(1, 1)->value()));
+        mPropertyTracker.setValue(QRectF(lineEdit(0, 0)->value(),
+                                          lineEdit(0, 1)->value(),
+                                          lineEdit(1, 0)->value(),
+                                          lineEdit(1, 1)->value()));
     }
 };
 
@@ -147,8 +148,8 @@ public:
 
 protected:
     void onEditingFinished() override {
-        mPropertyTracker.setValue(QVector2D(spinBox(0, 0)->value(),
-                                            spinBox(0, 1)->value()));
+        mPropertyTracker.setValue(QVector2D(lineEdit(0, 0)->value(),
+                                            lineEdit(0, 1)->value()));
     }
 };
 
@@ -164,9 +165,9 @@ public:
 
 protected:
     void onEditingFinished() override {
-        mPropertyTracker.setValue(QVector3D(spinBox(0, 0)->value(),
-                                            spinBox(0, 1)->value(),
-                                            spinBox(0, 2)->value()));
+        mPropertyTracker.setValue(QVector3D(lineEdit(0, 0)->value(),
+                                            lineEdit(0, 1)->value(),
+                                            lineEdit(0, 2)->value()));
     }
 };
 
@@ -182,10 +183,10 @@ public:
 
 protected:
     void onEditingFinished() override {
-        mPropertyTracker.setValue(QVector4D(spinBox(0, 0)->value(),
-                                            spinBox(0, 1)->value(),
-                                            spinBox(0, 2)->value(),
-                                            spinBox(0, 3)->value()));
+        mPropertyTracker.setValue(QVector4D(lineEdit(0, 0)->value(),
+                                            lineEdit(0, 1)->value(),
+                                            lineEdit(0, 2)->value(),
+                                            lineEdit(0, 3)->value()));
     }
 };
 
@@ -201,10 +202,10 @@ public:
 
 protected:
     void onEditingFinished() override {
-        mPropertyTracker.setValue(QQuaternion(spinBox(0, 3)->value(),
-                                              spinBox(0, 0)->value(),
-                                              spinBox(0, 1)->value(),
-                                              spinBox(0, 2)->value()));
+        mPropertyTracker.setValue(QQuaternion(lineEdit(0, 3)->value(),
+                                              lineEdit(0, 0)->value(),
+                                              lineEdit(0, 1)->value(),
+                                              lineEdit(0, 2)->value()));
     }
 };
 

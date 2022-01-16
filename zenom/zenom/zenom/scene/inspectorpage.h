@@ -2,19 +2,17 @@
 #define INSPECTORPAGE_H
 
 #include <QScrollArea>
-#include <QGridLayout>
-#include <QLabel>
+#include <QScrollBar>
 
 #include "propertywidget.h"
+#include "../widget/unboundedscrollarea.h"
 
-class PropertyWidget;
-
-class InspectorPage : public QScrollArea
+class InspectorPage : public UnboundedScrollArea
 {
     Q_OBJECT
 
 public:
-    InspectorPage(QObject* pObjectToInspect);
+    InspectorPage(QObject* pObjectToInspect, QWidget* pParent = nullptr);
 
     inline QObject* object() const { return mObject; }
 

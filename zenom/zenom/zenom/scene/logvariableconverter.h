@@ -13,8 +13,6 @@
 class LogVariableConverter
 {
 public:
-    static QString typeName(const int pTypeId);
-
     LogVariableConverter(LogVariable* pLogVariable = NULL);
 
     inline LogVariable* logVariable() const { return mLogVariable; }

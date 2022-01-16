@@ -1,11 +1,10 @@
 #include "inspectorpage.h"
 
-#include <QVBoxLayout>
-#include <QLabel>
 #include <QDebug>
+#include <QLabel>
 
-InspectorPage::InspectorPage(QObject* pObjectToInspect)
-    : QScrollArea(),
+InspectorPage::InspectorPage(QObject* pObjectToInspect, QWidget* pParent)
+    : UnboundedScrollArea(pParent),
       mObject(pObjectToInspect)
 {
     const auto metaObject = pObjectToInspect->metaObject();
@@ -47,7 +46,6 @@ InspectorPage::InspectorPage(QObject* pObjectToInspect)
             separator->setFrameShadow(QFrame::Sunken);
             mainLayout->addWidget(separator);
 
-            //propertyWidget->layout()->setContentsMargins(3, 0, 3, 0);
             mPropertyWidgets.push_back(propertyWidget);
             mainLayout->addWidget(propertyWidget);
             connect(propertyWidget, &PropertyWidget::bindDialogRequested, this, &InspectorPage::bindDialogRequested);
@@ -55,8 +53,8 @@ InspectorPage::InspectorPage(QObject* pObjectToInspect)
     }
 
     auto widget = new QWidget();
-    widget->setFixedWidth(350);
     widget->setLayout(mainLayout);
+    setWidgetResizable(true);
     setWidget(widget);
 
     connect(mObject, &QObject::objectNameChanged, nameLabel, &QLabel::setText);

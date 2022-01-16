@@ -80,6 +80,7 @@ HEADERS  += zenom.h \
 	controlvariableswidget.h \
 	logvariableswidget.h \
 	plot/legend.h \
+    scene/numericlineedit.h \
     scene/propertywidget.h \
 	target/board.h \
 	target/boardwrapper.h \

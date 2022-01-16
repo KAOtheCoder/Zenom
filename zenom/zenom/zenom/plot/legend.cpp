@@ -27,10 +27,10 @@ Legend::Legend(QWidget* parent)
     layout()->addWidget(scrollArea);
 }
 
-void Legend::updateLegend (const QVariant &itemInfo, const QList< QwtLegendData > &pData) {
+void Legend::updateLegend (const QVariant &pItemInfo, const QList< QwtLegendData > &pData) {
     Q_UNUSED(pData);
 
-    auto item = itemInfo.value<QwtPlotItem*>();
+    auto item = pItemInfo.value<QwtPlotItem*>();
 
     if (item->rtti() == QwtPlotItem::Rtti_PlotCurve) {
         auto legendItem = m_legendItems.value(item);

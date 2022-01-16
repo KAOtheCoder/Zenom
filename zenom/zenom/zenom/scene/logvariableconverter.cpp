@@ -4,32 +4,6 @@ LogVariableConverter::LogVariableConverter(LogVariable* pLogVariable)
     : mLogVariable(pLogVariable)
 {}
 
-QString LogVariableConverter::typeName(const int pTypeId) {
-    QString name(QMetaType(pTypeId).name());
-
-    switch (pTypeId) {
-    case QMetaType::QSizeF:
-    case QMetaType::QPointF:
-    case QMetaType::QRectF:
-        return name.mid(1, name.size() - 2).toLower();
-    case QMetaType::QSize:
-    case QMetaType::QPoint:
-    case QMetaType::QRect:
-    case QMetaType::QColor:
-    case QMetaType::QVector2D:
-    case QMetaType::QVector3D:
-    case QMetaType::QVector4D:
-    case QMetaType::QQuaternion:
-    case QMetaType::QMatrix4x4:
-    case QMetaType::QUrl:
-    case QMetaType::QDate:
-    case QMetaType::QFont:
-        return name.mid(1).toLower();
-    }
-
-    return QMetaType(pTypeId).name();
-}
-
 bool LogVariableConverter::canConvert(const QMetaType::Type pType) const
 {
     if (!isNull() && QMetaType::canConvert(QMetaType::fromType<LogVariableConverter>(), QMetaType(pType))) {
