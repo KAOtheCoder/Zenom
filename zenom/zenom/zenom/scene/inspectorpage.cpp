@@ -1,5 +1,4 @@
 #include "inspectorpage.h"
-#include "propertyinspectoritem.h"
 
 #include <QVBoxLayout>
 #include <QLabel>
@@ -7,14 +6,20 @@
 
 InspectorPage::InspectorPage(QObject* pObjectToInspect)
     : QScrollArea(),
-      mObject(pObjectToInspect),
-      mPropertiesLayout(new QGridLayout())
+      mObject(pObjectToInspect)
 {
     const auto metaObject = pObjectToInspect->metaObject();
 
     auto mainLayout = new QVBoxLayout();
+    mainLayout->setAlignment(Qt::AlignTop);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
 
+    const int spacing = 5;
     auto nameLayout = new QHBoxLayout();
+    nameLayout->setAlignment(Qt::AlignLeft);
+    nameLayout->setSpacing(spacing);
+    nameLayout->setContentsMargins(spacing, spacing, spacing, spacing);
 
     auto typeLabel = new QLabel(metaObject->className());
     auto typePalette = typeLabel->palette();
@@ -27,7 +32,6 @@ InspectorPage::InspectorPage(QObject* pObjectToInspect)
     namePalette.setColor(nameLabel->foregroundRole(), QColor(Qt::darkGreen));
     nameLabel->setPalette(namePalette);
     nameLayout->addWidget(nameLabel);
-    nameLayout->addStretch();
 
     mainLayout->addLayout(nameLayout);
 
@@ -35,27 +39,31 @@ InspectorPage::InspectorPage(QObject* pObjectToInspect)
 
     for (int i = 0; i < propertyCount; ++i)
     {
-        const auto property = metaObject->property(i);
+        auto propertyWidget = PropertyWidget::create(mObject, metaObject->property(i), this);
 
-        if (PropertyTracker::isPropertySupported(property)) {
-            auto propertyItem = new PropertyInspectorItem(this, property);
-            mPropertyItems.push_back(propertyItem);
-            connect(propertyItem, &PropertyInspectorItem::bindDialogRequested, this, &InspectorPage::bindDialogRequested);
+        if (propertyWidget) {
+            QFrame* separator = new QFrame();
+            separator->setFrameShape(QFrame::HLine);
+            separator->setFrameShadow(QFrame::Sunken);
+            mainLayout->addWidget(separator);
+
+            //propertyWidget->layout()->setContentsMargins(3, 0, 3, 0);
+            mPropertyWidgets.push_back(propertyWidget);
+            mainLayout->addWidget(propertyWidget);
+            connect(propertyWidget, &PropertyWidget::bindDialogRequested, this, &InspectorPage::bindDialogRequested);
         }
     }
 
-    mainLayout->addLayout(mPropertiesLayout);
-    mainLayout->addStretch();
-
     auto widget = new QWidget();
+    widget->setFixedWidth(350);
     widget->setLayout(mainLayout);
     setWidget(widget);
 
-    connect(pObjectToInspect, &QObject::objectNameChanged, nameLabel, &QLabel::setText);
+    connect(mObject, &QObject::objectNameChanged, nameLabel, &QLabel::setText);
 }
 
 void InspectorPage::updateValues()
 {
-    for (auto propertyItem : mPropertyItems)
-        propertyItem->updateValue();
+    for (auto widget : mPropertyWidgets)
+        widget->updateValue();
 }

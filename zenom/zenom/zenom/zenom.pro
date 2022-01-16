@@ -22,6 +22,7 @@ CONFIG += c++11
 
 SOURCES += main.cpp\
         plot/legend.cpp \
+    scene/propertywidget.cpp \
 	target/board.cpp \
 	target/boardwrapper.cpp \
 	target/daqboard1.cpp \
@@ -53,7 +54,6 @@ SOURCES += main.cpp\
         scene/inspectorwidget.cpp \
         scene/logvariableconverter.cpp \
         scene/objecthierarchytreewidgetitem.cpp \
-        scene/propertyinspectoritem.cpp \
         scene/propertytracker.cpp \
         scene/scenemanager.cpp \
         scene/scenemainwindow.cpp \
@@ -80,6 +80,7 @@ HEADERS  += zenom.h \
 	controlvariableswidget.h \
 	logvariableswidget.h \
 	plot/legend.h \
+    scene/propertywidget.h \
 	target/board.h \
 	target/boardwrapper.h \
 	target/daqboard1.h \
@@ -106,7 +107,6 @@ HEADERS  += zenom.h \
         scene/inspectorwidget.h \
         scene/logvariableconverter.h \
         scene/objecthierarchytreewidgetitem.h \
-        scene/propertyinspectoritem.h \
         scene/propertytracker.h \
         scene/scenemanager.h \
         scene/scenemainwindow.h \

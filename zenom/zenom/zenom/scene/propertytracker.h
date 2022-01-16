@@ -24,6 +24,9 @@ public:
     QString valueAsString() const;
     void setValueByString(const QString& pValue);
 
+    QVariant value() const { return mObject->property(mProperty.name()); }
+    void setValue(const QVariant& pValue) { mObject->setProperty(mProperty.name(), pValue); }
+
 private:
     QObject* mObject;
     QMetaProperty mProperty;

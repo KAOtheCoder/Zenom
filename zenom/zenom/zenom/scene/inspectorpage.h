@@ -5,9 +5,9 @@
 #include <QGridLayout>
 #include <QLabel>
 
-#include "propertytracker.h"
+#include "propertywidget.h"
 
-class PropertyInspectorItem;
+class PropertyWidget;
 
 class InspectorPage : public QScrollArea
 {
@@ -17,7 +17,6 @@ public:
     InspectorPage(QObject* pObjectToInspect);
 
     inline QObject* object() const { return mObject; }
-    inline QGridLayout* propertiesLayout() const { return mPropertiesLayout; }
 
     void updateValues();
 
@@ -26,8 +25,7 @@ signals:
 
 private:
     QObject* mObject;
-    QGridLayout* mPropertiesLayout;
-    QList<PropertyInspectorItem*> mPropertyItems;
+    QList<PropertyWidget*> mPropertyWidgets;
 };
 
 #endif // INSPECTORPAGE_H
